@@ -1,0 +1,107 @@
+﻿.navigationBar
+{
+    display:inline-block;
+    position:relative;
+    
+}
+
+.navigationBar a
+{
+    color:white;
+    text-decoration:none;
+}
+
+.navigationBar ul
+{
+    float:left;
+    color:white;
+    position:relative;
+    list-style-type: none;
+    margin:0;
+    padding-left: 3rem;
+    margin-top:0;
+    padding-top:0;
+}
+
+.navigationBar li
+{
+    display:inline-block;
+    position:relative
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-right:6rem;
+    margin-top:0;
+    padding-top:0;
+}
+
+.line
+{
+   display:block;
+   position:relative;
+   left:0px;
+   background-color:white;
+   background-size: 100% 100%;
+   height: .5rem;
+   border:0px;
+   margin:0px;
+   padding: 0px;
+   /*
+   position:relative;
+   background-size: 100% 100%;
+   background-color:white;
+   height: 3rem;
+   width: 200rem;
+       */
+}
+
+.navigationBar .selectedWrapper
+{
+    position:relative;
+}
+
+.navigationBar .selectedWrapper .selectedBar
+{
+   z-index:1;
+   position: absolute;
+   background-color:red;
+   width: 8rem;
+   height: .5rem;
+   top:5.45rem;
+   left:-.5rem;
+   visibility:hidden;
+}
+
+.navigationBar .userBar
+{
+    float:right;
+    display:inline;
+    position:relative;
+    margin-top:1rem;
+    margin-left:49rem;
+}
+
+.navigationBar .userBar ul
+{
+    position:relative;
+    list-style-type: none;
+}
+
+div
+{
+    display:inline-block;
+}
+
+.navigationBar .userBar li
+{
+    position:relative
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color:white;
+}
+
+.navigationBar .userBar img
+{
+    position:absolute;
+    width:7rem;
+    height:7rem;
+    top:-1.5rem;
+}
+
