@@ -1,0 +1,111 @@
+﻿body {
+    margin: 0px;
+    background-color: lightgrey;
+}   
+
+.bannerPicture
+{
+   display:block;
+   position:relative;
+   left:0px;
+   background-image:url('bannerPic.jpg');
+   background-size: 100% 100%;
+   height: 30rem;
+   border:0px;
+   margin:0px;
+   padding: 0px;
+
+   /*if i want to go back to full screen, remove these two*/
+   //width:70rem;
+   //margin-left:25rem;
+}
+
+
+.bannerPicture img
+{
+    position: relative;
+    top: 2rem;
+    left: -1rem;
+    width: 0rem;
+    border-right:0px;
+    height: 0rem;
+}
+
+
+.initalSelections
+{
+    display:inline-block;
+    position:relative;
+    background-color: transparent;
+    height: 30rem;
+    margin-left:5rem;
+    margin-right:3rem;
+    padding-left:2rem;
+    padding-right:4.5rem;
+    
+}
+
+div
+{
+    display: inline-block;
+}
+
+.initalSelections img
+{
+    width: 24rem;
+    height: 20rem;
+}
+
+.option
+{
+    padding-left: 0rem;
+    padding-right:1.5rem;
+    padding-top: 2rem;
+    position:relative;
+    width:24rem;
+    height:20rem;
+}
+
+.option h1
+{
+    color:white;
+    position:absolute;
+    font-size:4rem;
+    left:6rem;
+    top:6rem;
+    opacity:0;
+}
+
+.overlay {
+    opacity: 0;
+    background-color: black;
+    position: absolute;
+    width: 24rem;
+    height: 20rem;
+}
+
+.introduceProduct
+{
+    margin-top:-1rem;
+}
+
+.introduceProduct h1
+{
+    text-align: center;
+    color:white;
+    font-size: 3rem;
+    margin-left:5rem;
+    margin-top:1rem;
+    margin-bottom:0;
+}
+
+.introduceProduct .productLine
+{
+   display:block;
+   position:relative;
+   background-color:white;
+   background-size: 100% 100%;
+   height: .2rem;
+   width:111rem;
+   margin-left:4rem;
+}
