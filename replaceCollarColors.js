@@ -9,6 +9,11 @@ var redValue = 118;
 var greenValue = 195;
 var blueValue = 101;
 
+var redToUse = 245;
+var greenToUse = 66;
+var blueToUse = 233;
+
+var mostPromenentValue = 245;
 
 
 var main = function () {
@@ -46,11 +51,14 @@ var ChangeColor = function(ctx, canvas)
             //(data[i + 1] <= greenValue + maginOfError && data[i + 1] >= greenValue - maginOfError) &&
             //(data[i + 2] <= blueValue + maginOfError && data[i + 1] >= blueValue - maginOfError) &&
             data[i + 1] - colorMargin  > data[i + 2] && data[i + 1] - colorMargin > data[i])
-        {
-            data[i] = data[i + 1];
-            data[i + 1] = 0;
-            data[i + 2] = 0;
-
+        { 
+            var percentToUse = data[i + 1] / mostPromenentValue;
+            //data[i] = data[i + 1];
+            //data[i + 1] = 0;
+            //data[i + 2] = 0;
+            data[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
+            data[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
+            data[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
         }
     }
     canvasToPutData.putImageData(imageData, 0, 0);
