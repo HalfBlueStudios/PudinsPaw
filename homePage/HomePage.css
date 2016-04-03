@@ -1,19 +1,25 @@
-﻿body {
-    margin: 0px;
-    background-color: lightgrey;
+﻿html
+{
+    font-family:DengXian;
+}
+
+body {
+    margin: 0;
+    background-image:url(../siteWide/images/bg-image.png);
 }   
 
 .bannerPicture
 {
    display:block;
    position:relative;
-   left:0px;
+   left:0;
    background-image:url('bannerPic.jpg');
    background-size: 100% 100%;
-   height: 30rem;
-   border:0px;
-   margin:0px;
-   padding: 0px;
+   background-repeat:no-repeat;
+   height: 40rem;
+   border:0;
+   margin:0;
+   padding: 0;
 
    /*if i want to go back to full screen, remove these two*/
    //width:70rem;
@@ -27,7 +33,7 @@
     top: 2rem;
     left: -1rem;
     width: 0rem;
-    border-right:0px;
+    border-right:0;
     height: 0rem;
 }
 
@@ -36,7 +42,7 @@
 {
     display:inline-block;
     position:relative;
-    background-color: transparent;
+    background-color: white;
     height: 30rem;
     margin-left:5rem;
     margin-right:3rem;
@@ -52,8 +58,8 @@ div
 
 .initalSelections img
 {
-    width: 24rem;
-    height: 20rem;
+    width: 20rem;
+    height: 16rem;
 }
 
 .option
@@ -92,7 +98,7 @@ div
 .introduceProduct h1
 {
     text-align: center;
-    color:white;
+    color:grey;
     font-size: 3rem;
     margin-left:5rem;
     margin-top:1rem;
@@ -103,7 +109,7 @@ div
 {
    display:block;
    position:relative;
-   background-color:white;
+   background-color:grey;
    background-size: 100% 100%;
    height: .2rem;
    width:111rem;

@@ -1,8 +1,17 @@
 ﻿.navigationBar
 {
-    display:inline-block;
-    position:relative;
-    
+    display:inline;
+    z-index:1;
+    position:absolute;
+    font-size:.6rem;    
+}
+
+.navigationBar .navBox
+{
+    display:table;
+    overflow:auto;
+    background-color: rgba(0, 0, 0, .6);
+
 }
 
 .navigationBar a
@@ -11,7 +20,7 @@
     text-decoration:none;
 }
 
-.navigationBar ul
+.navigationBar .navBox ul
 {
     float:left;
     position:relative;
@@ -22,7 +31,7 @@
     padding-top:0;
 }
 
-.navigationBar li
+.navigationBar .navBox li
 {
     display:inline-block;
     position:relative
@@ -52,33 +61,33 @@
        */
 }
 
-.navigationBar .selectedWrapper
+.navigationBar .navBox .selectedWrapper
 {
     position:relative;
 }
 
-.navigationBar .selectedWrapper .selectedBar
+.navigationBar .navBox .selectedWrapper .selectedBar
 {
    z-index:1;
    position: absolute;
    background-color:teal;
    width: 5rem;
    height: .2rem;
-   top:5rem;
+   top:3.24rem;
    left:-.5rem;
    visibility:hidden;
 }
 
-.navigationBar .userBar
+.navigationBar .navBox .userBar
 {
     float:right;
     display:inline;
     position:relative;
     margin-top:1rem;
-    margin-left:49rem;
+    margin-left:62rem;
 }
 
-.navigationBar .userBar ul
+.navigationBar .navBox .userBar ul
 {
     position:relative;
     list-style-type: none;
@@ -101,6 +110,6 @@ div
     position:absolute;
     width:4rem;
     height:4rem;
-    top:-1.5rem;
+    top:-.7rem;
 }
 

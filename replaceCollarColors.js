@@ -9,11 +9,11 @@ var redValue = 118;
 var greenValue = 195;
 var blueValue = 101;
 
-var redToUse = 245;
-var greenToUse = 66;
-var blueToUse = 233;
+var redToUse = 2;
+var greenToUse = 250;
+var blueToUse = 151;
 
-var mostPromenentValue = 245;
+var mostPromenentValue = redToUse;
 
 
 var main = function () {
@@ -41,6 +41,19 @@ var drawImage = function()
 
 var ChangeColor = function(ctx, canvas)
 {
+    var mostPromenentValue;
+    if (redToUse >= blueToUse && redToUse >= greenToUse)
+    {
+        mostPromenentValue = redToUse;
+    }
+    else if (blueToUse >= greenToUse && blueToUse >= redToUse)
+    {
+        mostPromenentValue = blueToUse;
+    }
+    else
+    {
+        mostPromenentValue = greenToUse;
+    }
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
     var canvasToPut = document.getElementById("lastCanvas");
