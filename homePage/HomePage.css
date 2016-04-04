@@ -16,22 +16,22 @@ body {
    background-image:url('bannerPic.jpg');
    background-size: 100% 100%;
    background-repeat:no-repeat;
-   height: 40rem;
+   height: 640px;
    border:0;
    margin:0;
    padding: 0;
 
    /*if i want to go back to full screen, remove these two*/
    //width:70rem;
-   //margin-left:25rem;
+  //margin-left:25rem;
 }
 
 
 .bannerPicture img
 {
     position: relative;
-    top: 2rem;
-    left: -1rem;
+    top: 32px;
+    left: -16px);
     width: 0rem;
     border-right:0;
     height: 0rem;
@@ -43,11 +43,12 @@ body {
     display:inline-block;
     position:relative;
     background-color: white;
-    height: 30rem;
-    margin-left:5rem;
-    margin-right:3rem;
-    padding-left:2rem;
-    padding-right:4.5rem;
+    height: 380px;
+    margin-left: 80px;
+    padding-left: 112px;
+    border-style:solid;
+    border-color:darkgrey;
+    border-width:1px;
     
 }
 
@@ -58,27 +59,27 @@ div
 
 .initalSelections img
 {
-    width: 20rem;
-    height: 16rem;
+    width: 320px;
+    height: 256px;
 }
 
 .option
 {
     padding-left: 0rem;
-    padding-right:1.5rem;
-    padding-top: 2rem;
+    padding-right: 24px;
+    padding-top: 32px;
     position:relative;
-    width:24rem;
-    height:20rem;
+    width: 384px;
+    height: 320px;
 }
 
 .option h1
 {
     color:white;
     position:absolute;
-    font-size:4rem;
-    left:6rem;
-    top:6rem;
+    font-size: 64px;
+    left: 96px;
+    top: 96px;
     opacity:0;
 }
 
@@ -86,22 +87,25 @@ div
     opacity: 0;
     background-color: black;
     position: absolute;
-    width: 24rem;
-    height: 20rem;
+    width: 384px;
+    height: 320px;
 }
 
 .introduceProduct
 {
-    margin-top:-1rem;
+    margin-top: -16px;
 }
 
 .introduceProduct h1
 {
     text-align: center;
-    color:grey;
-    font-size: 3rem;
-    margin-left:5rem;
-    margin-top:1rem;
+    color:white;
+    //put back in to make border around text;
+    font-family:Tahoma;
+    text-shadow: 1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    font-size: 48px;
+    margin-left: 80px;
+    margin-top: 16px;
     margin-bottom:0;
 }
 
@@ -109,9 +113,10 @@ div
 {
    display:block;
    position:relative;
-   background-color:grey;
+   background-color:teal;
    background-size: 100% 100%;
-   height: .2rem;
-   width:111rem;
-   margin-left:4rem;
+   height: 5px;
+   width: 1760px;
+   margin-left: 80px;
+   margin-top: 1px;
 }
