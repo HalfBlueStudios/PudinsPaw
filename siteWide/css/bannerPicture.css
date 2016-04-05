@@ -1,0 +1,29 @@
+﻿
+
+.bannerPicture
+{
+   display:block;
+   position:relative;
+   left:0;
+   background-size: 100% 100%;
+   background-repeat:no-repeat;
+   height: 440px;
+   border:0;
+   margin:0;
+   padding: 0;
+
+   /*if i want to go back to full screen, remove these two*/
+   //width:70rem;
+  //margin-left:25rem;
+}
+
+
+.bannerPicture img
+{
+    position: relative;
+    top: 32px;
+    left: -16px);
+    width: 0rem;
+    border-right:0;
+    height: 0rem;
+}

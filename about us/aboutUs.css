@@ -1,0 +1,30 @@
+﻿body {
+}
+
+.petimonial
+{
+    margin-top:20px;
+    display:inline-block;
+    background-color: rgba(0, 0, 0, .3);
+    height: 300px;
+    width:900px;
+    border:solid;
+    border-color:teal;
+}
+
+.petimonial img
+{
+    margin-top:25px;
+    margin-left:25px;
+    float:left;
+    width:350px;
+    height:250px;
+}
+
+.petimonial h1
+{
+    margin-top:75px;
+    margin-right:20px;
+    float:right;
+    width:480px;
+}

@@ -8,12 +8,12 @@ body {
     background-image:url(../siteWide/images/bg-image.png);
 }   
 
+
 .bannerPicture
 {
    display:block;
    position:relative;
    left:0;
-   background-image:url('bannerPic.jpg');
    background-size: 100% 100%;
    background-repeat:no-repeat;
    height: 640px;
@@ -36,7 +36,6 @@ body {
     border-right:0;
     height: 0rem;
 }
-
 
 .initalSelections
 {
