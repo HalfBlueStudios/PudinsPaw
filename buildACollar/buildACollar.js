@@ -58,7 +58,7 @@ var setUpOptions = function(numToSet)
     {
         addString += addClassString;
     }
-    $('.optionSelector').append(addString);
+    $('.optionSelector').html(addString);
 }
 
 var main = function ()
@@ -70,11 +70,8 @@ var main = function ()
     });
     setStepInProgress(allSteps[0].stepRef);
     setUpCircleSelector();
-    setInterval(function () {
-        $('.optionSelector').find('.stepOption').each(function () {
-            prompt("another step");
-        });
-    }, 100);
+    $('.optionSelector').children('.stepOption').each(function () {
+    });
 }
 
 $(document).ready(main);

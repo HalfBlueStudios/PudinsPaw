@@ -26,9 +26,22 @@
    margin-right:-5px;
 }
 
-.OptionSelector
+.optionSelector
 {
     display:block;
     margin-top:20px;
     margin-left:400px;
+}
+
+.optionSelector .stepOption
+{
+    width: 0; 
+	height: 0; 
+    color:red;
+    border-color:red;
+	border-left: 600px solid transparent;
+	border-right: 600px solid transparent;
+	border-bottom: 800px solid;
+    border-bottom-left-radius: 600px;
+    border-bottom-right-radius: 600px;
 }
