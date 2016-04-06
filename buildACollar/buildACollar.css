@@ -25,3 +25,10 @@
    margin-left:-5px;
    margin-right:-5px;
 }
+
+.OptionSelector
+{
+    display:block;
+    margin-top:20px;
+    margin-left:400px;
+}

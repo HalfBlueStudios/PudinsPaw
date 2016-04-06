@@ -41,13 +41,40 @@ var setStepInProgress = function(stepToChange)
     $(stepToChange).find('.circleConnectorLine').css("background-color", "orange");
 }
 
+var setUpCircleSelector = function()
+{
+    $('.OptionSelector').css("width", "650px");
+    $('.OptionSelector').css("height", "450px");
+    $('.OptionSelector').css("border-radius", "50%");
+    $('.OptionSelector').css("border-color", "orange");
+    $('.OptionSelector').css("background-color", "red");
+}
+
+var setUpOptions = function(numToSet)
+{
+    var addString = "";
+    var addClassString = "<div class=\"stepOption\"></div>";
+    for(var i = 0; i < numToSet; i++)
+    {
+        addString += addClassString;
+    }
+    $('.optionSelector').append(addString);
+}
+
 var main = function ()
 {
     getAllSteps();
+    setUpOptions(4);
     $('.allSteps').find('.step').click( function () {
         setStepInProgress(this);
     });
     setStepInProgress(allSteps[0].stepRef);
+    setUpCircleSelector();
+    setInterval(function () {
+        $('.optionSelector').find('.stepOption').each(function () {
+            prompt("another step");
+        });
+    }, 100);
 }
 
 $(document).ready(main);
