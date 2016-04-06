@@ -1,0 +1,27 @@
+﻿.allSteps
+{
+    margin-top:25px;
+    margin-left:400px;
+}
+
+.allSteps .step .circle
+{
+    display:inline-block;
+    width:75px;
+    height:75px;
+    border-radius: 50%;
+    border-color:orange;
+    background-color:red;
+}
+
+.allSteps .step .circleConnectorLine
+{
+   display: inline-block;
+   position:relative;
+   background-color:red;
+   height: 5px;
+   width: 100px;
+   margin-bottom:33px;
+   margin-left:-5px;
+   margin-right:-5px;
+}
