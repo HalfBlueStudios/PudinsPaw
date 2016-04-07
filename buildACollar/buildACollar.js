@@ -64,13 +64,22 @@ var setUpOptions = function(numToSet)
 var main = function ()
 {
     getAllSteps();
-    setUpOptions(4);
+    setUpOptions(2);
     $('.allSteps').find('.step').click( function () {
         setStepInProgress(this);
     });
     setStepInProgress(allSteps[0].stepRef);
     setUpCircleSelector();
+    var rotateAmmount = 0;
+    var moveAmmount = 0;
+    var moveUp = 0;
     $('.optionSelector').children('.stepOption').each(function () {
+        $(this).css("transform", "rotate(" + rotateAmmount + "deg);");
+        $(this).css("left", moveAmmount);
+        $(this).css("top", moveUp);
+        rotateAmmount += 90;
+        moveAmmount -= 36;
+        moveUp -= 27;
     });
 }
 
