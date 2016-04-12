@@ -8,12 +8,16 @@ body {
     background-image:url(../siteWide/images/bg-image.png);
 }   
 
-.bannerPicture
+.header
+{
+       width:100%;
+}
+
+.allWrapper .header .bannerPicture
 {
    display:block;
    position:relative;
    left:0;
-   background-image:url('bannerPic.jpg');
    background-size: 100% 100%;
    background-repeat:no-repeat;
    height: 440px;
@@ -27,22 +31,13 @@ body {
 }
 
 
-.bannerPicture img
-{
-    position: relative;
-    top: 32px;
-    left: -16px);
-    width: 0rem;
-    border-right:0;
-    height: 0rem;
-}
 
 
 .initalSelections
 {
     display:inline-block;
     position:relative;
-    background-color: white;
+    background-color: #F0F0F0;
     height: 280px;
     width:1220px;
         padding-left: 50px;

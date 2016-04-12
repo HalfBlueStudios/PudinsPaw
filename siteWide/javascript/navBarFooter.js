@@ -4,7 +4,9 @@ var elementsUpdated = false;
 
 var main = function()
 {
+    setFooter();
     var setUpElements = setInterval(function () {
+    $('.pageFooter').css('width', $(window).width());
     $('.navigationBar').find('.navBox').css('width', $(window).width());
         $('.navigationBar').find('li').each(
             function () {
@@ -32,6 +34,12 @@ var setNavigationBar = function()
         $('.navigationBar').html(data);
     });
     main();
+}
+
+var setFooter = function () {
+    $.get("siteWide/html/pageFooter.html", function (data) {
+        $('.pageFooter').html(data);
+    });
 }
 
 

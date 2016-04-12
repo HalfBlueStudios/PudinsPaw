@@ -1,4 +1,37 @@
-﻿.allSteps
+﻿.allOptions
+{
+    border-style:solid;
+    border-color:orange;
+    display:block;
+}
+
+.optionBox
+{
+    border-style:solid;
+    border-color:orange;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+.allSteps
 {
     margin-top:25px;
     margin-left:400px;
@@ -49,3 +82,5 @@
     border-bottom-left-radius: 60px;
     border-bottom-right-radius: 60px;
 }
+
+    */

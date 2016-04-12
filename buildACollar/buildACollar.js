@@ -63,6 +63,7 @@ var setUpOptions = function(numToSet)
 
 var main = function ()
 {
+    /*
     getAllSteps();
     setUpOptions(2);
     $('.allSteps').find('.step').click( function () {
@@ -81,6 +82,7 @@ var main = function ()
         moveAmmount -= 36;
         moveUp -= 27;
     });
+    */
 }
 
 $(document).ready(main);
