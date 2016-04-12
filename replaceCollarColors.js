@@ -60,15 +60,9 @@ var ChangeColor = function(ctx, canvas)
     var canvasToPutData = canvasToPut.getContext("2d");
     for(var i = 0; i < data.length; i +=4)
     {
-        if (//(data[i] <= redValue + mainColorMargin && data[i] >= redValue - mainColorMargin) &&
-            //(data[i + 1] <= greenValue + maginOfError && data[i + 1] >= greenValue - maginOfError) &&
-            //(data[i + 2] <= blueValue + maginOfError && data[i + 1] >= blueValue - maginOfError) &&
-            data[i + 1] - colorMargin  > data[i + 2] && data[i + 1] - colorMargin > data[i])
+        if (data[i + 1] - colorMargin  > data[i + 2] && data[i + 1] - colorMargin > data[i])
         { 
             var percentToUse = data[i + 1] / mostPromenentValue;
-            //data[i] = data[i + 1];
-            //data[i + 1] = 0;
-            //data[i + 2] = 0;
             data[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
             data[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
             data[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;

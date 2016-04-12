@@ -5,18 +5,17 @@
     display:block;
 }
 
-.optionBox
+.pictureOptionBox
 {
+    margin-left:20px;
     border-style:solid;
     border-color:orange;
 }
 
 
-.customizedCollarImage img
+.customizedCollarImage canvas
 {
     margin-left:50%;
-    width:200px;
-    height:200px;
 }
 
 
