@@ -12,11 +12,14 @@
     border-color:orange;
 }
 
-
-.customizedCollarImage canvas
+.previewCanvas
 {
-    margin-left:50%;
+    display:inline;
+        margin-left:200px;
+        margin-bottom:50px;
 }
+
+
 
 
 
