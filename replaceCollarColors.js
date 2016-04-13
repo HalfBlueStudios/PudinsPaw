@@ -41,6 +41,7 @@ var drawImage = function()
 
 var ChangeColor = function(ctx, canvas)
 {
+    var numPixels = 0;
     var mostPromenentValue;
     if (redToUse >= blueToUse && redToUse >= greenToUse)
     {
@@ -66,9 +67,11 @@ var ChangeColor = function(ctx, canvas)
             data[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
             data[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
             data[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
+            numPixels++;
         }
     }
     canvasToPutData.putImageData(imageData, 0, 0);
+    console.log("num pixels changed: " + numPixels);
 }
 
 
