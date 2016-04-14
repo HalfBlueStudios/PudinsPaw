@@ -1,22 +1,66 @@
 ﻿.allOptions
 {
-    border-style:solid;
-    border-color:orange;
+    //border-style:solid;
+    //border-color:orange;
     display:block;
+    margin-left:20px;
+    background-color:transparent;
+}
+
+.content
+{
+    background-color:transparent;
 }
 
 .pictureOptionBox
 {
     margin-left:20px;
-    border-style:solid;
+    //border-style:solid;
+    //border-color:orange;
+}
+
+.pictureOptionBox h1
+{
+    border:none;
+    border-bottom:solid;
     border-color:orange;
+}
+
+.wordOptionBox 
+{
+    margin-left:0px;
+        display:inline-flex;
+}
+
+.wordOptionBox h1
+{
+    border:none;
+    margin-left:20px;
+    border-bottom:solid;
+    border-color:orange;
+}
+
+.styleOption h1
+{
+    border:none;
+    border-bottom:solid;
+    border-color:red;
+    display:inline-block;
+}
+
+.typeOptions h1
+{
+    border:none;
+    border-bottom:solid;
+    border-color:teal;
+    display:inline-block;
 }
 
 .previewCanvas
 {
-    display:inline;
-        margin-left:200px;
-        margin-bottom:50px;
+    display:inline-block;
+    margin-left: 700px;
+    margin-bottom:50px;
 }
 
 

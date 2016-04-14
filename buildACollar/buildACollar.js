@@ -19,24 +19,33 @@ var baseImage;
 var displayedCanvas;
 var dispalyedCtx;
 
-const IMAGE_WIDTH = 400;
-const IMAGE_HEIGHT = 400;
+const IMAGE_WIDTH = 700;
+const IMAGE_HEIGHT = 600;
 
 var currentImageData;
 var snapOuter = [81,155,80];
-var snapInner = [47,46,77];
+var snapInner = [47, 46, 77];
+
+var currentInnerRGB;
+var currentOuterRGB;
+
+var canvasHeight;
+var canvasPosition;
 
 
 var setUpCanvas = function()
 {
     $('#backgroundCanvas').css("width", IMAGE_WIDTH);
     $('#backgroundCanvas').css("height", IMAGE_HEIGHT);
+    $('#backgroundCanvas').css("margin-right", "-" + IMAGE_WIDTH + "px");
     $('#displayedCanvas').css("width", IMAGE_WIDTH);
     $('#displayedCanvas').css("height", IMAGE_HEIGHT);
     canvas = document.getElementById("backgroundCanvas");
     ctx = canvas.getContext('2d');
     displayedCanvas = document.getElementById("displayedCanvas");
     displayedCtx = displayedCanvas.getContext('2d');
+    canvasHeight = parseInt($('.previewCanvas').css('height'));
+    canvasPosition = parseInt($('.previewCanvas').position().top);
 }
 
 var resetCanvas = function()
@@ -44,8 +53,8 @@ var resetCanvas = function()
     baseImage = new Image();
     baseImage.src = "buildACollar/baseTypeImages/snapBase.jpg";
     baseImage.onload = function () {
-        ctx.drawImage(baseImage, 0, 0, baseImage.width, baseImage.height);
-        displayedCtx.drawImage(baseImage, 0, 0, baseImage.width, baseImage.height);
+        ctx.drawImage(baseImage, 0, 0, 200, 150);
+        displayedCtx.drawImage(baseImage, 0, 0, 200, 150);
     }
     currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
 }
@@ -61,33 +70,42 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var redToUse = newColors[0];
     var greenToUse = newColors[1];
     var blueToUse = newColors[2];
+
+
+    var redPerc = 0;
+    var bluePerc = 0;
+    var greenPerc = 0;
     var colorToCheck;
-    if (redToUse >= blueToUse && redToUse >= greenToUse) {
-        mostPromenentValue = redToUse;
-        colorToCheck = 0;
-    }
-    else if (blueToUse >= greenToUse && blueToUse >= redToUse) {
-        mostPromenentValue = blueToUse;
-        colorToCheck = 2;
-    }
-    else {
-        mostPromenentValue = greenToUse;
-        colorToCheck = 1;
-    }
 
     var redToMatch = colorToMatch[0];
     var greenToMatch = colorToMatch[1];
     var blueToMatch = colorToMatch[2];
-    var rToGHigh = redToMatch / greenToMatch * (1 + percentMargin);
-    var rToGLow = redToMatch / greenToMatch * (1 - percentMargin);
-    var rToBHigh = redToMatch / blueToMatch * (1 + percentMargin);
-    var rToBLow = redToMatch / blueToMatch * (1 - percentMargin);
-    var gToBHigh = greenToMatch / blueToMatch * (1 + percentMargin);
-    var gToBLow = greenToMatch / blueToMatch * (1 - percentMargin);
+    if (redToMatch >= blueToMatch && redToMatch >= greenToMatch) {
+        mostPromenentValue = redToMatch;
+        colorToCheck = 0;
+    }
+    else if (blueToMatch >= greenToMatch && blueToMatch >= redToMatch) {
+        mostPromenentValue = blueToMatch;
+        colorToCheck = 2;
+    }
+    else {
+        mostPromenentValue = greenToMatch;
+        colorToCheck = 1;
+        var redPerc = percentMargin / 1.5;
+        var bluePerc = percentMargin / 1.5;
+        var greenPerc = percentMargin * 4;
+    }
+    var total = redToMatch + greenToMatch + blueToMatch;
+    var percRedHigh = redToMatch / total  + redPerc;
+    console.log("per red h: " + percRedHigh);
+    var percRedLow = redToMatch / total - redPerc;
+    console.log("per red l: " + percRedLow);
+    var percGreenHigh = greenToMatch / total + greenPerc;
+    var percGreenLow = greenToMatch / total  - greenPerc;
+    var percBlueHigh = blueToMatch / total + bluePerc;
+    var percBlueLow = blueToMatch / total - bluePerc;
 
-    var displayedCanvas = document.getElementById("displayedCanvas");
-    var dispalyedCtx = canvas.getContext('2d');
-    var displayedImageData = ctx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
+    var displayedImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
     var displayedData = displayedImageData.data;
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
@@ -95,22 +113,22 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var canvasToPutData = canvasToPut.getContext("2d");
     for (var i = 0; i < data.length; i += 4) {
         //if (data[i + 1] - colorMargin > data[i + 2] && data[i + 1] - colorMargin > data[i]) {
-        var rToGTest = data[i] / data[i + 1];
-        var rToBTest = data[1] / data[i + 2];
-        var gToBTest = data[i + 1] / data[i + 2];
-        if //(rToGTest < rToGHigh && rToGTest > rToGLow &&
-            (rToBTest < rToBHigh && rToBTest > rToBLow) //&&)
-            //gToBTest < gToBHigh && gToBTest > gToBLow)
-        {
-            var percentToUse = data[colorToCheck] / mostPromenentValue;
-            displayedData[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
-            displayedData[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
-            displayedData[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
-            numPixels++;
-        }
-        else
-        {
-
+        if (data[i + colorToCheck] >= data[i] && data[i + colorToCheck] >= data[i + 1] && data[i + colorToCheck] >= data[i + 2]) {
+            var pixelTotal = data[i] + data[i + 1] + data[i + 2];
+            var testRed = data[i] / pixelTotal;
+            var testGreen = data[1 + 1] / pixelTotal;
+            var testBlue = data[i + 2] / pixelTotal;
+            //if (testRed < percRedHigh && testRed > percRedLow &&
+            //    testGreen < percGreenHigh && testGreen > percGreenLow &&
+            //    testBlue < percBlueHigh && testBlue > percBlueLow)
+                //gToBTest < gToBHigh && gToBTest > gToBLow)
+            //{
+                var percentToUse = data[i + colorToCheck] / mostPromenentValue;
+                displayedData[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
+                displayedData[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
+                displayedData[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
+                numPixels++;
+            //}
         }
     }
     displayedCtx.putImageData(displayedImageData, 0, 0);
@@ -157,11 +175,15 @@ var main = function ()
 
 var previewChangeInnerColor = function(newInner)
 {
-    newInner.
-    redToUse = newInner.R;
-    greenToUse = 250;
-    blueToUse = 151;
+    changeColors(snapInner, parseColor(newInner), 0.2);
 }
+
+var changeInnerColor = function (newInner)
+{
+    currentInnerRGB = newInner;
+    currentImageData = changeColors(snapInner, parseColor(newInner), 0.2);
+}
+
 
 var previewChangeOuterColor = function (newOuter)
 {
@@ -170,12 +192,8 @@ var previewChangeOuterColor = function (newOuter)
 
 var changeOuterColor = function(newOuter)
 {
+    currentOuterRGB = newOuter;
     currentImageData = changeColors(snapOuter,parseColor(newOuter),0.2);
-}
-
-var changeInnerColor = function(newInner)
-{
-
 }
 
 var attachHandlers = function () {
@@ -216,7 +234,22 @@ var attachHandlers = function () {
                 resetColor();
             }
         );
-
+        $(window).scroll(function () {
+            var positionToCompare = (canvasHeight /2 + canvasPosition);
+            var windowScroll = parseInt($(window).scrollTop());
+            console.log(windowScroll + ">");
+            if (windowScroll > positionToCompare)//(canvasHeight + canvasPosition));
+            {
+                console.log("found true!");
+                $('.previewCanvas').css("position", "absolute");
+                $('.allOptions').css("margin-top", canvasHeight);
+                $(".previewCanvas").stop().animate({ "marginTop": ($(window).scrollTop() - positionToCompare) + "px"}, "fast");
+            }
+            else
+            {
+                $('.previewCanvas').css("top", "canvasPosition");
+            }
+        });
     }, 100);
 }
 
@@ -227,10 +260,10 @@ var resetColor = function()
 
 var setUpOptions = function()
 {
-    $.get("buildACollar/options.html", function (data) {
-        $('#colorOptions1').html(data);
-        $('#colorOptions2').html(data);
-    });
+    $('#colorOptions1').load("buildACollar/options.html #regularColors");
+    $('#colorOptions2').load("buildACollar/options.html #regularColors");
+    $('#styleSelectOptions').load("buildACollar/options.html #styles");
+    $('#typeSelectOptions').load("buildACollar/options.html #types");
 }
 
 $(document).ready(main);
