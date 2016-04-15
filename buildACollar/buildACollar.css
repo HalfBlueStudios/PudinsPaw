@@ -11,12 +11,17 @@
 {
     background-color:transparent;
 }
-
-.pictureOptionBox
+ 
+.pictureOptionBox 
 {
     margin-left:20px;
-    //border-style:solid;
-    //border-color:orange;
+}
+
+.pictureOptionBox img
+{
+    border-style:hidden;
+    border-width:thick;
+    border-color:teal;
 }
 
 .pictureOptionBox h1

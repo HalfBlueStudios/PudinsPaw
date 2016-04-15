@@ -1,18 +1,4 @@
-﻿
-var currentcolor;
-
-var selectedBarName = ".selectedBar";
-
-var maginOfError = 120;
-var mainColorMargin = 100;
-
-var colorMargin = 10;
-
-var outerRedValue = 118;
-var outerGreenValue = 195;
-var outerBlueValue = 101;
-
-var ctx;
+﻿var ctx;
 var canvas;
 var baseImage;
 
@@ -32,6 +18,11 @@ var currentOuterRGB;
 var canvasHeight;
 var canvasPosition;
 
+var chosenInnerColorObject;
+var chosenOuterColorObject;
+
+const startPic = "buildACollar/baseTypeImages/snapBase.jpg"
+
 
 var setUpCanvas = function()
 {
@@ -48,15 +39,15 @@ var setUpCanvas = function()
     canvasPosition = parseInt($('.previewCanvas').position().top);
 }
 
-var resetCanvas = function()
+var resetCanvas = function(newUrl)
 {
     baseImage = new Image();
-    baseImage.src = "buildACollar/baseTypeImages/snapBase.jpg";
+    baseImage.src = newUrl;
     baseImage.onload = function () {
         ctx.drawImage(baseImage, 0, 0, 200, 150);
         displayedCtx.drawImage(baseImage, 0, 0, 200, 150);
+        currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
     }
-    currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
 }
 
 
@@ -168,9 +159,10 @@ var parseColor = function (colorToParse)
 var main = function ()
 {
     setUpCanvas();
-    resetCanvas();
+    resetCanvas(startPic);
     setUpOptions();
     attachHandlers();
+    currentImageData = displayedCtx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 var previewChangeInnerColor = function(newInner)
@@ -178,8 +170,15 @@ var previewChangeInnerColor = function(newInner)
     changeColors(snapInner, parseColor(newInner), 0.2);
 }
 
-var changeInnerColor = function (newInner)
+var changeInnerColor = function (innerObject)
 {
+    if (chosenInnerColorObject != null && chosenInnerColorObject != innerObject)
+    {
+        chosenInnerColorObject.children("img").css("border-style", "hidden");
+    }
+    innerObject.children("img").css("border-style", "solid");
+    chosenInnerColorObject = innerObject;
+    var newInner = innerObject.children("img").css("background-color");
     currentInnerRGB = newInner;
     currentImageData = changeColors(snapInner, parseColor(newInner), 0.2);
 }
@@ -190,8 +189,14 @@ var previewChangeOuterColor = function (newOuter)
     changeColors(snapOuter,parseColor(newOuter), 0.2);
 }
 
-var changeOuterColor = function(newOuter)
+var changeOuterColor = function(outerObject)
 {
+    if (chosenOuterColorObject != null && chosenOuterColorObject != outerObject) {
+        chosenOuterColorObject.children("img").css("border-style", "hidden");
+    }
+    outerObject.children("img").css("border-style", "solid");
+    chosenOuterColorObject = outerObject;
+    var newOuter = outerObject.children("img").css("background-color");
     currentOuterRGB = newOuter;
     currentImageData = changeColors(snapOuter,parseColor(newOuter),0.2);
 }
@@ -220,10 +225,10 @@ var attachHandlers = function () {
             function () {
                 var optionType = $(this).parent().parent().attr('id');
                 if (optionType == "colorOptions1") {
-                    changeInnerColor($(this).children("img").css("background-color"));
+                    changeInnerColor($(this));
                 }
                 else if (optionType == "colorOptions2") {
-                    changeOuterColor($(this).children("img").css("background-color"));
+                    changeOuterColor($(this));
                 }
 
             }
@@ -234,10 +239,15 @@ var attachHandlers = function () {
                 resetColor();
             }
         );
+        $('.styleOption').find('h1').click(function () {
+            changePicture($(this).parent().find('#imageToUse').innerHTML);
+        });
+        $('.typeOption').click(function(){
+               
+        });
         $(window).scroll(function () {
             var positionToCompare = (canvasHeight /2 + canvasPosition);
             var windowScroll = parseInt($(window).scrollTop());
-            console.log(windowScroll + ">");
             if (windowScroll > positionToCompare)//(canvasHeight + canvasPosition));
             {
                 console.log("found true!");
@@ -253,9 +263,15 @@ var attachHandlers = function () {
     }, 100);
 }
 
+var changePicture = function(newPictureObject)
+{
+    resetCanvas(newPictureObject);
+}
+
 var resetColor = function()
 {
-    displayedCtx.putImageData(currentImageData, 0, 0);
+    displayedCtx.putImageData(currentImageData, 0,0);
+    console.log("putting back color!");
 }
 
 var setUpOptions = function()
@@ -264,6 +280,7 @@ var setUpOptions = function()
     $('#colorOptions2').load("buildACollar/options.html #regularColors");
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
     $('#typeSelectOptions').load("buildACollar/options.html #types");
+    $('#sizeSelectOptions').load("buildACollar/options.html #sizes");
 }
 
 $(document).ready(main);
