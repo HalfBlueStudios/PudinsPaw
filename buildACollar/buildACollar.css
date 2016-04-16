@@ -11,10 +11,35 @@
 {
     background-color:transparent;
 }
- 
+
+.allOptions
+{
+    float:right;
+    margin-left:500px;
+    margin-top:-200px;
+} 
+
 .pictureOptionBox 
 {
     margin-left:20px;
+}
+
+.colorOption 
+{
+    position:relative;
+            z-index:1;
+}
+
+.typeOption
+{
+    position:relative;
+            z-index:1;
+}
+
+.styleOption
+{
+    position:relative;
+            z-index:1;
 }
 
 .pictureOptionBox img
@@ -27,8 +52,8 @@
 .pictureOptionBox h1
 {
     border:none;
-    border-bottom:solid;
-    border-color:orange;
+    //border-bottom:solid;
+    //border-color:orange;
 }
 
 .wordOptionBox 
@@ -41,8 +66,8 @@
 {
     border:none;
     margin-left:20px;
-    border-bottom:solid;
-    border-color:orange;
+    //border-bottom:solid;
+    //border-color:orange;
 }
 
 .styleOption h1
@@ -64,8 +89,12 @@
 .previewCanvas
 {
     display:inline-block;
-    margin-left: 700px;
+    float:left;
+    position:absolute;
+    margin-left: 30px;
     margin-bottom:50px;
+    margin-top:-160px;
+    z-index: 0;
 }
 
 

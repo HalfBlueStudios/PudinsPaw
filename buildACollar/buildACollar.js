@@ -21,7 +21,14 @@ var canvasPosition;
 var chosenInnerColorObject;
 var chosenOuterColorObject;
 
+var chosenStyleObject;
+
+var chosenTypeObject;
+
+var chosenSizeObject;
+
 const startPic = "buildACollar/baseTypeImages/snapBase.jpg"
+const startPath = "buildACollar";
 
 
 var setUpCanvas = function()
@@ -239,12 +246,15 @@ var attachHandlers = function () {
                 resetColor();
             }
         );
-        $('.styleOption').find('h1').click(function () {
-            changePicture($(this).parent().find('#imageToUse').innerHTML);
-        });
+        $('.styleOption').click(
+            function () {
+                changeStyle($(this));
+            }
+        );
         $('.typeOption').click(function(){
-               
+            changeType($(this));
         });
+        /*
         $(window).scroll(function () {
             var positionToCompare = (canvasHeight /2 + canvasPosition);
             var windowScroll = parseInt($(window).scrollTop());
@@ -260,12 +270,36 @@ var attachHandlers = function () {
                 $('.previewCanvas').css("top", "canvasPosition");
             }
         });
+        */
     }, 100);
 }
 
-var changePicture = function(newPictureObject)
+var changeStyle = function(newStyleObject)
 {
-    resetCanvas(newPictureObject);
+    if (newStyleObject == chosenStyleObject)
+    {
+        return;
+    }
+    var picturePath = newStyleObject.css("background-image");
+    var startPart = picturePath.indexOf(startPath);
+    var endPart = picturePath.indexOf('"', startPart);
+    picturePath = picturePath.substring(startPart, endPart);
+    chosenStyleObject = newStyleObject;
+    resetCanvas(picturePath);
+}
+
+var changeType = function(newTypeObject)
+{
+    if (newTypeObject == chosenTypeObject)
+    {
+        return;
+    }
+    var picturePath = newTypeObject.css("background-image");
+    var startPart = picturePath.indexOf(startPath);
+    var endPart = picturePath.indexOf('"', startPart);
+    picturePath = picturePath.substring(startPart, endPart);
+    chosenTypeObject = newPictureObject;
+    resetCanvas(picturePath);
 }
 
 var resetColor = function()
