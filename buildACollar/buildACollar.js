@@ -111,7 +111,10 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var canvasToPutData = canvasToPut.getContext("2d");
     for (var i = 0; i < data.length; i += 4) {
         //if (data[i + 1] - colorMargin > data[i + 2] && data[i + 1] - colorMargin > data[i]) {
-        if (data[i + colorToCheck] >= data[i] && data[i + colorToCheck] >= data[i + 1] && data[i + colorToCheck] >= data[i + 2]) {
+        //if (data[i + colorToCheck] >= data[i] && data[i + colorToCheck] >= data[i + 1] && data[i + colorToCheck] >= data[i + 2]) {
+        var currentPixel = [data[i], data[i + 1], data[i + 2]];
+        if(checkColorMatch(colorToMatch, currentPixel,percentMargin) == true) 
+        {
             var pixelTotal = data[i] + data[i + 1] + data[i + 2];
             var testRed = data[i] / pixelTotal;
             var testGreen = data[1 + 1] / pixelTotal;
@@ -133,6 +136,35 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     console.log("num pixels changed: " + numPixels);
     return (displayedImageData);
 }
+
+    var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin)
+    {
+        matchRed = colorsToMatch[0];
+        matchGreen = colorsToMatch[1];
+        matchBlue = colorsToMatch[2];
+        RToB = matchRed / matchBlue;
+        RToG = matchGreen / matchGreen;
+        GToB = matchGreen / matchBlue;
+
+        candidateRed = candidatePixel[0];
+        candidateGreen = candidatePixel[1];
+        candidateBlue = candidatePixel[2];
+        RToBCand = candidateRed / candidateBlue;
+        RToGCand = candidateRed / candidateGreen;
+        GToBCand = candidateGreen / candidateBlue;
+
+        if(RToBCand < RToB * ( 1  +percentMargin) && RToBCand > RToB * (1 - percentMargin) &&
+            RToGCand < RToG * ( 1  +percentMargin) && RToGCand > RToG * (1 - percentMargin) &&
+            GToBCand < GToB * ( 1  +percentMargin) && GToBCand > GToB * (1 - percentMargin))
+        {
+            return(true);
+        }
+        else
+        {
+            return(false);
+        }
+
+    }
 
 
 
@@ -193,7 +225,7 @@ var changeInnerColor = function (innerObject)
 
 var previewChangeOuterColor = function (newOuter)
 {
-    changeColors(snapOuter,parseColor(newOuter), 0.2);
+    changeColors(snapOuter,parseColor(newOuter), 0.05);
 }
 
 var changeOuterColor = function(outerObject)
