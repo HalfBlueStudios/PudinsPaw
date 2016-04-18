@@ -105,7 +105,9 @@
 .navigationBar .navBox .userBar ul
 {
     position:relative;
+    display:inline-flex;
     list-style-type: none;
+    margin-left: -730px;
 }
 
 div
@@ -124,7 +126,7 @@ div
 {
     width:4rem;
     height:4rem;
-    top:-.7rem;
+    margin-top: -10px;
 }
 
 .navigationBar .logoDivder img
