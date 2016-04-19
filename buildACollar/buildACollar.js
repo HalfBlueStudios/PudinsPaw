@@ -153,9 +153,9 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         RToGCand = candidateRed / candidateGreen;
         GToBCand = candidateGreen / candidateBlue;
 
-        if(RToBCand < RToB * ( 1  +percentMargin) && RToBCand > RToB * (1 - percentMargin) &&
-            RToGCand < RToG * ( 1  +percentMargin) && RToGCand > RToG * (1 - percentMargin) &&
-            GToBCand < GToB * ( 1  +percentMargin) && GToBCand > GToB * (1 - percentMargin))
+        if(RToBCand < RToB * ( 1  + percentMargin) && RToBCand > RToB * (1 - percentMargin) &&
+            RToGCand < RToG * ( 1  + percentMargin) && RToGCand > RToG * (1 - percentMargin) &&
+            GToBCand < GToB * ( 1  + percentMargin) && GToBCand > GToB * (1 - percentMargin))
         {
             return(true);
         }
@@ -225,7 +225,7 @@ var changeInnerColor = function (innerObject)
 
 var previewChangeOuterColor = function (newOuter)
 {
-    changeColors(snapOuter,parseColor(newOuter), 0.05);
+   changeColors(snapOuter,parseColor(newOuter), 0.4);
 }
 
 var changeOuterColor = function(outerObject)
