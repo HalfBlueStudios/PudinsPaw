@@ -95,9 +95,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     }
     var total = redToMatch + greenToMatch + blueToMatch;
     var percRedHigh = redToMatch / total  + redPerc;
-    console.log("per red h: " + percRedHigh);
     var percRedLow = redToMatch / total - redPerc;
-    console.log("per red l: " + percRedLow);
     var percGreenHigh = greenToMatch / total + greenPerc;
     var percGreenLow = greenToMatch / total  - greenPerc;
     var percBlueHigh = blueToMatch / total + bluePerc;
@@ -133,37 +131,111 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         }
     }
     displayedCtx.putImageData(displayedImageData, 0, 0);
-    console.log("num pixels changed: " + numPixels);
     return (displayedImageData);
 }
 
     var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin)
     {
-        matchRed = colorsToMatch[0];
-        matchGreen = colorsToMatch[1];
-        matchBlue = colorsToMatch[2];
-        RToB = matchRed / matchBlue;
-        RToG = matchGreen / matchGreen;
-        GToB = matchGreen / matchBlue;
+        var percentToUse = 255 * percentMargin;
+        var matchRed = colorsToMatch[0];
+        var matchGreen = colorsToMatch[1];
+        var matchBlue = colorsToMatch[2];
 
-        candidateRed = candidatePixel[0];
-        candidateGreen = candidatePixel[1];
-        candidateBlue = candidatePixel[2];
-        RToBCand = candidateRed / candidateBlue;
-        RToGCand = candidateRed / candidateGreen;
-        GToBCand = candidateGreen / candidateBlue;
+        var RToB_Ratio = matchRed / matchBlue;
+        var RToG_Ratio = matchRed / matchGreen;
+        var GToB_Ratio = matchGreen / matchBlue;
 
-        if(RToBCand < RToB * ( 1  + percentMargin) && RToBCand > RToB * (1 - percentMargin) &&
-            RToGCand < RToG * ( 1  + percentMargin) && RToGCand > RToG * (1 - percentMargin) &&
-            GToBCand < GToB * ( 1  + percentMargin) && GToBCand > GToB * (1 - percentMargin))
-        {
-            return(true);
+        var RToB_Distance = Math.abs(matchRed - matchBlue);
+        var RToG_Distance = Math.abs(matchRed - matchGreen);
+        var GToB_Distance = Math.abs(matchGreen - matchBlue);
+
+        var candidateRed = candidatePixel[0];
+        var candidateGreen = candidatePixel[1];
+        var candidateBlue = candidatePixel[2];
+
+        var RToB_Cand_Ratio = isNaN(candidateRed / candidateBlue) ? 0 : candidateRed / candidateBlue;
+        var RToG_Cand_Ratio = isNaN (candidateRed / candidateGreen) ? 0 : candidateRed / candidateGreen;
+        var GToB_Cand_Ratio = isNaN (candidateGreen / candidateBlue) ? 0 : candidateGreen / candidateBlue;
+
+        var RToB_Cand_Distance = Math.abs(candidateRed - candidateBlue);
+        var RToG_Cand_Distance = Math.abs(candidateRed - candidateGreen);
+        var GToB_Cand_Distance = Math.abs(candidateGreen - candidateBlue);
+
+        var RToBPerc = getPercentToColor(RToB_Distance, RToB_Ratio, RToB_Cand_Distance, RToB_Cand_Ratio);
+        var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
+        var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
+        var totalPerc = RToBPerc + RToGPerc + GToBPerc;
+        var percToUse = .2;
+        if (RToBPerc < percToUse * 2 && RToGPerc < percToUse / 2 && GToBPerc < percToUse * 2) {
+            return (true);
         }
+            //console.log("R To B percent: " + RToBPerc);
+            /*
+            if(RToBCand < RToB + percentMargin && RToBCand > RToB - percentMargin &&
+                RToGCand < RToG  + percentMargin && RToGCand > RToG - percentMargin &&
+                GToBCand < GToB + percentMargin && GToBCand > GToB - percentMargin)
+            {
+                console.log("matching RG " + RToGCand + " to " + RToG);
+                console.log("matching RB " + RToBCand + " to " + RToG);
+                console.log("matching GB " + GToBCand + " to " + GToB); 
+                return(true);
+            }
+            else
+            {
+                return(false);
+            }
+            */
+            //console.log("R to b is " + RToBPerc + " beacuse " + RToB_Distance + " " + RToB_Ratio + " " + RToB_Cand_Distance + " " + RToB_Cand_Ratio);
+            //console.log("R to g is " + RToGPerc);
+            //console.log("G to B is " + GToBPerc);
+            //console.log("returned false because " + totalPerc + " is greater than " + percentMargin);
         else
         {
-            return(false);
+            return (false);
         }
 
+    }
+
+
+    var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
+    {
+        candDistance = (candDistance == 0) ? 1 : candDistance;
+        var perRatio = Math.abs(colorRatio - candRatio);
+        if (isNaN(Math.abs(colorDistance))) {
+            alert("stop 1!");
+        }
+        var distance_perc = colorDistance / candDistance;
+        if (distance_perc > 2)
+        {
+            var temp = distance_perc;
+            var counter = 0;
+            RToB_distance_perc = 0;
+            temp--; //get rid of 1 to normalize
+            while(temp > 1)
+            {
+                temp--;
+                counter++;
+                //console.log("in loop with " + candDistance + " temp is " + temp);
+                distance_perc += colorDistance;
+            }
+            var ammountBetween = candDistance - (colorDistance * counter);
+            var divideAmmount = (Math.abs(colorDistance - ammountBetween) == 0) ? 1 : (Math.abs(colorDistance - ammountBetween));
+            if(isNaN(Math.abs(colorDistance - ammountBetween))) 
+            {
+                alert("stop 2!");
+            }
+            distance_perc += colorDistance / divideAmmount;
+        }
+        else if (distance_perc > 1)
+        {
+            var ammountBetween = candDistance - colorDistance;
+            var divideAmmount = (Math.abs(colorDistance - ammountBetween) == 0) ? 1 : (Math.abs(colorDistance - ammountBetween));
+            if (isNaN(Math.abs(colorDistance - ammountBetween))) {
+                alert("stop 3!");
+            }
+            distance_perc = colorDistance / divideAmmount;
+        }
+        return (perRatio * distance_perc);
     }
 
 
@@ -206,7 +278,7 @@ var main = function ()
 
 var previewChangeInnerColor = function(newInner)
 {
-    changeColors(snapInner, parseColor(newInner), 0.2);
+    changeColors(snapInner, parseColor(newInner), 200);
 }
 
 var changeInnerColor = function (innerObject)
@@ -337,7 +409,6 @@ var changeType = function(newTypeObject)
 var resetColor = function()
 {
     displayedCtx.putImageData(currentImageData, 0,0);
-    console.log("putting back color!");
 }
 
 var setUpOptions = function()
