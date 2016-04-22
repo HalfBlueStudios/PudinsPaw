@@ -145,28 +145,30 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         var RToG_Ratio = matchRed / matchGreen;
         var GToB_Ratio = matchGreen / matchBlue;
 
-        var RToB_Distance = Math.abs(matchRed - matchBlue);
-        var RToG_Distance = Math.abs(matchRed - matchGreen);
-        var GToB_Distance = Math.abs(matchGreen - matchBlue);
+        var RToB_Distance = matchRed - matchBlue;
+        var RToG_Distance = matchRed - matchGreen;
+        var GToB_Distance = matchGreen - matchBlue;
 
         var candidateRed = candidatePixel[0];
         var candidateGreen = candidatePixel[1];
         var candidateBlue = candidatePixel[2];
 
+
+        //are these affected by removing the absolute values?
         var RToB_Cand_Ratio = isNaN(candidateRed / candidateBlue) ? 0 : candidateRed / candidateBlue;
         var RToG_Cand_Ratio = isNaN (candidateRed / candidateGreen) ? 0 : candidateRed / candidateGreen;
         var GToB_Cand_Ratio = isNaN (candidateGreen / candidateBlue) ? 0 : candidateGreen / candidateBlue;
 
-        var RToB_Cand_Distance = Math.abs(candidateRed - candidateBlue);
-        var RToG_Cand_Distance = Math.abs(candidateRed - candidateGreen);
-        var GToB_Cand_Distance = Math.abs(candidateGreen - candidateBlue);
+        var RToB_Cand_Distance = candidateRed - candidateBlue;
+        var RToG_Cand_Distance = candidateRed - candidateGreen;
+        var GToB_Cand_Distance = candidateGreen - candidateBlue;
 
         var RToBPerc = getPercentToColor(RToB_Distance, RToB_Ratio, RToB_Cand_Distance, RToB_Cand_Ratio);
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = .2;
-        if (RToBPerc < percToUse * 2 && RToGPerc < percToUse / 2 && GToBPerc < percToUse * 2) {
+        var percToUse = 130;
+        if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
             //console.log("R To B percent: " + RToBPerc);
@@ -199,6 +201,14 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
 
     var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
     {
+        var multiplyByTwo = false;
+        if ((colorDistance < 0 && candDistance > 0) || (candDistance < 0 && colorDistance > 0))
+        {
+            //console.log("multiply by two....Activated!!!!!!");
+            multiplyByTwo = true;
+        }
+        colorDistance = Math.abs(colorDistance);
+        candDistance = Math.abs(candDistance);
         candDistance = (candDistance == 0) ? 1 : candDistance;
         var perRatio = Math.abs(colorRatio - candRatio);
         if (isNaN(Math.abs(colorDistance))) {
@@ -234,6 +244,10 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
                 alert("stop 3!");
             }
             distance_perc = colorDistance / divideAmmount;
+        }
+        if (multiplyByTwo == true)
+        {
+            distance_perc *= 2;
         }
         return (perRatio * distance_perc);
     }

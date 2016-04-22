@@ -1,13 +1,4 @@
-﻿.allOptions
-{
-    //border-style:solid;
-    //border-color:orange;
-    display:block;
-    margin-left:20px;
-    background-color:transparent;
-}
-
-.content
+﻿.content
 {
     background-color:transparent;
 }
@@ -16,7 +7,7 @@
 {
     float:right;
     margin-left:500px;
-    margin-top:-200px;
+    margin-top:-155px;
 } 
 
 .pictureOptionBox 
@@ -93,7 +84,7 @@
     position:absolute;
     margin-left: 30px;
     margin-bottom:50px;
-    margin-top:-160px;
+    margin-top:-140px;
     z-index: 0;
 }
 

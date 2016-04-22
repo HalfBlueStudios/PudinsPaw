@@ -16,10 +16,12 @@
 
 .navigationBar .navBox
 {
-    display:table;
-    overflow:auto;
+    position:absolute;
+    display:inline-block;
+    overflow:hidden;
     background-color: rgba(0, 0, 0, .6);
     width:1420px;
+    height:80px;
 
 }
 
@@ -35,16 +37,17 @@
     position:relative;
     list-style-type: none;
     margin:0;
-    margin-left:20%;
+    margin-left:260px;
     margin-top:0;
     padding-top:0;
+    top:9px;
 }
 
 .navigationBar .navBox li
 {
     display:inline-block;
-    position:relative
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    position:relative;
+    /*font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;*/
     margin-right:6rem;
     margin-top:0;
     padding-top:0;
@@ -81,9 +84,9 @@
    position: absolute;
    background-color:teal;
    width: 5rem;
-   height: .2rem;
-   top:3.24rem;
-   left:-.5rem;
+   height: 5px;
+   top: 55px;
+   left: -5px;
    visibility:hidden;
 }
 
@@ -97,7 +100,7 @@
     margin-left:0px;
 }
 
-.navBox li
+.navBox ul
 {
     margin:0px;
 }
@@ -107,7 +110,9 @@
     position:relative;
     display:inline-flex;
     list-style-type: none;
-    margin-left: -730px;
+    margin-left: -50px;
+    margin-right:35px;
+    top:5px;
 }
 
 div
@@ -117,8 +122,8 @@ div
 
 .navigationBar .userBar li
 {
-    position:relative
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    position:relative;
+    /*font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;*/
     color:white;
 }
 
@@ -131,9 +136,10 @@ div
 
 .navigationBar .logoDivder img
 {
-    height:70px;
-    width:70px;
+    height:150px;
+    width:320px;
     margin-right:0px;
     margin:0px;
-    margin-left:0px;
+    margin-left:-70px;
+   margin-top:-30px;
 }
