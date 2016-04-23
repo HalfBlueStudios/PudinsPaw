@@ -37,7 +37,7 @@
     position:relative;
     list-style-type: none;
     margin:0;
-    margin-left:260px;
+    margin-left:160px;
     margin-top:0;
     padding-top:0;
     top:9px;
@@ -95,9 +95,6 @@
     float:right;
     display:inline;
     position:relative;
-    margin-top:1rem;
-    margin-right:9.5%;
-    margin-left:0px;
 }
 
 .navBox ul
@@ -110,8 +107,10 @@
     position:relative;
     display:inline-flex;
     list-style-type: none;
-    margin-left: -50px;
-    margin-right:35px;
+    margin-left: -200px;
+    margin-top: 15px;
+    //margin-left: 50px;
+    //margin-right:35px;
     top:5px;
 }
 
