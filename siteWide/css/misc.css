@@ -4,6 +4,7 @@
 	padding:0;
 	height:100%;
     background-image:url(../images/bg-image.png);
+    background-color:teal;
 }
 .allWrapper {
 	min-height:100%;
