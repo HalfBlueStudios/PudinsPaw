@@ -167,7 +167,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = 130;
+        var percToUse = 2;
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
@@ -202,18 +202,31 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
     {
         var multiplyByTwo = false;
+
+        //getting ratio num
+        var perRatio = 0;
+        if ((colorRatio > 0 && candRatio < 0) || colorRatio < 0 && candRatio > 0)
+        {
+            perRatio = Math.abs(colorRatio) + Math.abs(candRatio);
+        }
+        else
+        {
+            perRatio = Math.abs(colorRatio - candRatio);
+        }
+        if (isNaN(Math.abs(colorDistance))) {
+            alert("stop 1!");
+        }
+
+
+        //getting distance num
         if ((colorDistance < 0 && candDistance > 0) || (candDistance < 0 && colorDistance > 0))
         {
             //console.log("multiply by two....Activated!!!!!!");
             multiplyByTwo = true;
         }
-        colorDistance = Math.abs(colorDistance);
-        candDistance = Math.abs(candDistance);
+        colorDistance = colorDistance;
+        candDistance = candDistance;
         candDistance = (candDistance == 0) ? 1 : candDistance;
-        var perRatio = Math.abs(colorRatio - candRatio);
-        if (isNaN(Math.abs(colorDistance))) {
-            alert("stop 1!");
-        }
         var distance_perc = colorDistance / candDistance;
         if (distance_perc > 2)
         {
@@ -249,7 +262,8 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         {
             distance_perc *= 2;
         }
-        return (perRatio * distance_perc);
+        //console.log(perRatio + " * " + distance_perc + " = " + (perRatio * distance_perc));
+        return Math.abs(perRatio * distance_perc);
     }
 
 
