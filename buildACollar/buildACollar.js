@@ -9,8 +9,8 @@ const IMAGE_WIDTH = 700;
 const IMAGE_HEIGHT = 600;
 
 var currentImageData;
-var snapOuter = [81,155,80, 120, .1];
-var snapInner = [47, 46, 77, 1, .3];
+var snapOuter = [81,155,80];
+var snapInner = [47, 46, 77];
 
 var currentInnerRGB;
 var currentOuterRGB;
@@ -174,7 +174,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = colorsToMatch[3];
+        var percToUse = 2000;
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
@@ -223,9 +223,9 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
             (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .3 <= candidatePixel[impColor] - candidatePixel[1]) &&
             (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .3 <= candidatePixel[impColor] - candidatePixel[2]))
             */
-        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * colorsToMatch[4]) < candidatePixel[impColor] || impColor == 0) &&
-            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * colorsToMatch[4]) < candidatePixel[impColor] || impColor == 1) &&
-            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * colorsToMatch[4]) < candidatePixel[impColor] || impColor == 2)
+        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * .4) < candidatePixel[impColor] || impColor == 0) &&
+            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .4) < candidatePixel[impColor] || impColor == 1) &&
+            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .4) < candidatePixel[impColor] || impColor == 2)
             )
         {
             return (true);
