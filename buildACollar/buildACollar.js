@@ -136,6 +136,11 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
 
     var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin)
     {
+        //if color doesn't even romtely match, don't waste resources on other checks
+        if (initialColorCheck(colorsToMatch, candidatePixel) == false)
+        {
+            return;
+        }
         var percentToUse = 255 * percentMargin;
         var matchRed = colorsToMatch[0];
         var matchGreen = colorsToMatch[1];
@@ -163,11 +168,13 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         var RToG_Cand_Distance = candidateRed - candidateGreen;
         var GToB_Cand_Distance = candidateGreen - candidateBlue;
 
+        
+
         var RToBPerc = getPercentToColor(RToB_Distance, RToB_Ratio, RToB_Cand_Distance, RToB_Cand_Ratio);
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = 2;
+        var percToUse = 2000;
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
@@ -199,6 +206,57 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     }
 
 
+    var initialColorCheck = function(colorsToMatch, candidatePixel)
+    {
+        var redColor = colorsToMatch[0];
+        var greenColor = colorsToMatch[1];
+        var blueColor = colorsToMatch[2];
+
+        var candRed = candidatePixel[0];
+        var candGreen = candidatePixel[1];
+        var candBlue = candidatePixel[2];
+
+        var impColor = findMostImportantColor(colorsToMatch);
+
+        /*
+        if((Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * .3 <= candidatePixel[impColor] - candidatePixel[0]) &&
+            (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .3 <= candidatePixel[impColor] - candidatePixel[1]) &&
+            (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .3 <= candidatePixel[impColor] - candidatePixel[2]))
+            */
+        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * .4) < candidatePixel[impColor] || impColor == 0) &&
+            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .4) < candidatePixel[impColor] || impColor == 1) &&
+            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .4) < candidatePixel[impColor] || impColor == 2)
+            )
+        {
+            return (true);
+        }
+        else
+        {
+            return (false);
+        }
+
+
+
+    }
+
+    var findMostImportantColor = function(colorToMatch)
+    {
+        var redToMatch = colorToMatch[0];
+        var greenToMatch = colorToMatch[1];
+        var blueToMatch = colorToMatch[2];
+        if (redToMatch >= blueToMatch && redToMatch >= greenToMatch) {
+            mostPromenentValue = redToMatch;
+            return(0);
+        }
+        else if (greenToMatch >= blueToMatch && greenToMatch >= redToMatch) {
+            
+            return(1);
+        }
+        else {
+            return (2);
+        }
+    }
+
     var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
     {
         var multiplyByTwo = false;
@@ -227,7 +285,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         colorDistance = colorDistance;
         candDistance = candDistance;
         candDistance = (candDistance == 0) ? 1 : candDistance;
-        var distance_perc = colorDistance / candDistance;
+        var distance_perc = Math.abs(colorDistance / candDistance);
         if (distance_perc > 2)
         {
             var temp = distance_perc;
@@ -247,7 +305,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
             {
                 alert("stop 2!");
             }
-            distance_perc += colorDistance / divideAmmount;
+            distance_perc += Math.abs(colorDistance / divideAmmount);
         }
         else if (distance_perc > 1)
         {
@@ -256,7 +314,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
             if (isNaN(Math.abs(colorDistance - ammountBetween))) {
                 alert("stop 3!");
             }
-            distance_perc = colorDistance / divideAmmount;
+            distance_perc = Math.abs(colorDistance / divideAmmount);
         }
         if (multiplyByTwo == true)
         {
