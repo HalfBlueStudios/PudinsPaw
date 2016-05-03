@@ -15,6 +15,9 @@ var snapInner = [47, 46, 77];
 var currentInnerRGB;
 var currentOuterRGB;
 
+var DRAW_IMAGE_WIDTH = 200;
+var DRAW_IMAGE_HEIGHT = 150;
+
 var canvasHeight;
 var canvasPosition;
 
@@ -27,7 +30,7 @@ var chosenTypeObject;
 
 var chosenSizeObject;
 
-const startPic = "buildACollar/baseTypeImages/snapBase.jpg"
+const startPic = "homepage/images/snapbackProduct.png"; //"buildACollar/baseTypeImages/snapBase.jpg";
 const startPath = "buildACollar";
 
 
@@ -40,8 +43,10 @@ var setUpCanvas = function()
     $('#displayedCanvas').css("height", IMAGE_HEIGHT);
     canvas = document.getElementById("backgroundCanvas");
     ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false
     displayedCanvas = document.getElementById("displayedCanvas");
     displayedCtx = displayedCanvas.getContext('2d');
+    displayedCtx.imageSmoothingEnabled = false
     canvasHeight = parseInt($('.previewCanvas').css('height'));
     canvasPosition = parseInt($('.previewCanvas').position().top);
 }
@@ -51,8 +56,8 @@ var resetCanvas = function(newUrl)
     baseImage = new Image();
     baseImage.src = newUrl;
     baseImage.onload = function () {
-        ctx.drawImage(baseImage, 0, 0, 200, 150);
-        displayedCtx.drawImage(baseImage, 0, 0, 200, 150);
+        ctx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
+        displayedCtx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
     }
 }
@@ -62,7 +67,69 @@ var drawImage = function () {
     ctx.drawImage(imageToUse, 0, 0);
 }
 
+var adjectPixelFoundCheck = function(pixelNum, foundPixelList)
+{
+    var listToCheck = getAdjacentPixelList(pixelNum);
+    //console.log("list length: " + listToCheck.length);
+    for (var i = 0; i < listToCheck.length; i++)
+    {
+        if (foundPixelList[listToCheck[i]] == true)
+        {
+            //console.log(listToCheck + " is not colored in adjancency to ");
+            return (true);
+        }
+        else
+        {
+            //console.log(listToCheck + " is not colored in adjancency to ");
+        }
+    }
+    return (false);
+}
+
+var getAdjacentPixelList = function(indexPix)
+{
+    var retList = [];
+    retList.push(indexPix);
+    var leftEdgePixel = false;
+    var rightEdgePixel = false;
+    if(indexPix % DRAW_IMAGE_WIDTH == 0)
+    {
+        leftEdgePixel = true;
+    }
+    else if(indexPix + 1 % DRAW_IMAGE_WIDTH == 0)
+    {
+        rightEdgePixel = true
+    }
+    if(indexPix - DRAW_IMAGE_WIDTH >= 0)
+    {
+        retList.push(indexPix - DRAW_IMAGE_WIDTH);
+    }
+    if(indexPix + DRAW_IMAGE_WIDTH <= (DRAW_IMAGE_HEIGHT * DRAW_IMAGE_WIDTH))
+    {
+        retList.push(indexPix + DRAW_IMAGE_WIDTH);
+    }
+    retList.forEach(function (pixNumber) {
+        if(leftEdgePixel == false)
+        {
+            retList.push(pixNumber - 1);
+        }
+        if(rightEdgePixel == false)
+        {
+            retList.push(pixNumber + 1);
+        }
+    });
+    retList = retList.splice(0, 1); //removes starting pixel from array
+    return (retList);
+}
+
 var changeColors = function (colorToMatch, newColors, percentMargin) {
+
+    var foundPixels = [DRAW_IMAGE_HEIGHT * DRAW_IMAGE_WIDTH]; //array that contains location of pixels that are chosen as strong match
+    for (var i = 0; i < foundPixels.length; i++)
+    {
+        foundPixels[i] = false;
+    }
+
     var mostPromenentValue;
     var numPixels = 0;
     var redToUse = newColors[0];
@@ -108,36 +175,34 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var canvasToPut = canvas;
     var canvasToPutData = canvasToPut.getContext("2d");
     for (var i = 0; i < data.length; i += 4) {
-        //if (data[i + 1] - colorMargin > data[i + 2] && data[i + 1] - colorMargin > data[i]) {
-        //if (data[i + colorToCheck] >= data[i] && data[i + colorToCheck] >= data[i + 1] && data[i + colorToCheck] >= data[i + 2]) {
         var currentPixel = [data[i], data[i + 1], data[i + 2]];
-        if(checkColorMatch(colorToMatch, currentPixel,percentMargin) == true) 
+        var pixelIndex = i / 4;
+        if (checkColorMatch(colorToMatch, currentPixel, percentMargin, pixelIndex, foundPixels) == true)
         {
             var pixelTotal = data[i] + data[i + 1] + data[i + 2];
             var testRed = data[i] / pixelTotal;
-            var testGreen = data[1 + 1] / pixelTotal;
+            var testGreen = data[i + 1] / pixelTotal;
             var testBlue = data[i + 2] / pixelTotal;
-            //if (testRed < percRedHigh && testRed > percRedLow &&
-            //    testGreen < percGreenHigh && testGreen > percGreenLow &&
-            //    testBlue < percBlueHigh && testBlue > percBlueLow)
-                //gToBTest < gToBHigh && gToBTest > gToBLow)
-            //{
                 var percentToUse = data[i + colorToCheck] / mostPromenentValue;
                 displayedData[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
                 displayedData[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
                 displayedData[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
                 numPixels++;
-            //}
+                foundPixels[pixelIndex] = true;
+        }
+        else
+        {
+            foundPixels[pixelIndex] = false;
         }
     }
     displayedCtx.putImageData(displayedImageData, 0, 0);
     return (displayedImageData);
 }
 
-    var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin)
+var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, placeInArray, foundPixelList)
     {
         //if color doesn't even romtely match, don't waste resources on other checks
-        if (initialColorCheck(colorsToMatch, candidatePixel) == false)
+        if (initialColorCheck(colorsToMatch, candidatePixel, placeInArray, foundPixelList) == false)
         {
             return;
         }
@@ -206,7 +271,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     }
 
 
-    var initialColorCheck = function(colorsToMatch, candidatePixel)
+var initialColorCheck = function(colorsToMatch, candidatePixel, pixelIndex, foundPixelList)
     {
         var redColor = colorsToMatch[0];
         var greenColor = colorsToMatch[1];
@@ -216,6 +281,12 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         var candGreen = candidatePixel[1];
         var candBlue = candidatePixel[2];
 
+        var marginToCheck = .4;
+        if (adjectPixelFoundCheck(pixelIndex, foundPixelList) == true)
+        {
+            marginToCheck /= 1.4;
+        }
+
         var impColor = findMostImportantColor(colorsToMatch);
 
         /*
@@ -223,9 +294,9 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
             (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .3 <= candidatePixel[impColor] - candidatePixel[1]) &&
             (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .3 <= candidatePixel[impColor] - candidatePixel[2]))
             */
-        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * .4) < candidatePixel[impColor] || impColor == 0) &&
-            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .4) < candidatePixel[impColor] || impColor == 1) &&
-            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .4) < candidatePixel[impColor] || impColor == 2)
+        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * marginToCheck) < candidatePixel[impColor] || impColor == 0) &&
+            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * marginToCheck) < candidatePixel[impColor] || impColor == 1) &&
+            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * marginToCheck) < candidatePixel[impColor] || impColor == 2)
             )
         {
             return (true);
@@ -239,7 +310,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
 
     }
 
-    var findMostImportantColor = function(colorToMatch)
+var findMostImportantColor = function(colorToMatch)
     {
         var redToMatch = colorToMatch[0];
         var greenToMatch = colorToMatch[1];
@@ -257,7 +328,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
         }
     }
 
-    var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
+var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRatio)
     {
         var multiplyByTwo = false;
 
