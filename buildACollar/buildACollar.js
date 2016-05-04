@@ -5,6 +5,9 @@ var baseImage;
 var displayedCanvas;
 var dispalyedCtx;
 
+var coloringCanvas;
+var coloringCtx;
+
 const IMAGE_WIDTH = 700;
 const IMAGE_HEIGHT = 600;
 
@@ -29,6 +32,7 @@ var chosenStyleObject;
 var chosenTypeObject;
 
 var chosenSizeObject;
+var pixelsToRecolorList = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
 
 const startPic = "homepage/images/snapbackProduct.png"; //"buildACollar/baseTypeImages/snapBase.jpg";
 const startPath = "buildACollar";
@@ -36,17 +40,24 @@ const startPath = "buildACollar";
 
 var setUpCanvas = function()
 {
+    $('#coloringCanvas').css("width", IMAGE_WIDTH); //coloring canvas used to load picture of new color/image and use that picture to recolor the collar
+    $('#coloringCanvas').css("height", IMAGE_HEIGHT);
+    $('#backgroundCanvas').css("margin-right", "-" + IMAGE_WIDTH + "px"); //used to hold the orignal collar so that changes are not permanent to canvas
     $('#backgroundCanvas').css("width", IMAGE_WIDTH);
     $('#backgroundCanvas').css("height", IMAGE_HEIGHT);
     $('#backgroundCanvas').css("margin-right", "-" + IMAGE_WIDTH + "px");
-    $('#displayedCanvas').css("width", IMAGE_WIDTH);
+    $('#displayedCanvas').css("width", IMAGE_WIDTH); //what user sees, shows the preview of their order
     $('#displayedCanvas').css("height", IMAGE_HEIGHT);
+
     canvas = document.getElementById("backgroundCanvas");
     ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false
+
     displayedCanvas = document.getElementById("displayedCanvas");
     displayedCtx = displayedCanvas.getContext('2d');
-    displayedCtx.imageSmoothingEnabled = false
+
+    coloringCanvas = document.getElementById("coloringCanvas");
+    coloringCtx = coloringCanvas.getContext('2d');
+
     canvasHeight = parseInt($('.previewCanvas').css('height'));
     canvasPosition = parseInt($('.previewCanvas').position().top);
 }
@@ -59,6 +70,15 @@ var resetCanvas = function(newUrl)
         ctx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         displayedCtx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
+    }
+}
+
+var loadNewColor = function(newUrl)
+{
+    colorImage = new Image();
+    colorImage.src = newUrl;
+    colorImage.onload = function () {
+        coloringCtx.drawImage(colorImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
     }
 }
 
@@ -122,9 +142,14 @@ var getAdjacentPixelList = function(indexPix)
     return (retList);
 }
 
+
+
 var changeColors = function (colorToMatch, newColors, percentMargin) {
 
-    var foundPixels = [DRAW_IMAGE_HEIGHT * DRAW_IMAGE_WIDTH]; //array that contains location of pixels that are chosen as strong match
+    var redToMatch = colorToMatch[0];
+    var greenToMatch = colorToMatch[1];
+    var blueToMatch = colorToMatch[2];
+    
     for (var i = 0; i < foundPixels.length; i++)
     {
         foundPixels[i] = false;
@@ -137,14 +162,8 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     var blueToUse = newColors[2];
 
 
-    var redPerc = 0;
-    var bluePerc = 0;
-    var greenPerc = 0;
     var colorToCheck;
 
-    var redToMatch = colorToMatch[0];
-    var greenToMatch = colorToMatch[1];
-    var blueToMatch = colorToMatch[2];
     if (redToMatch >= blueToMatch && redToMatch >= greenToMatch) {
         mostPromenentValue = redToMatch;
         colorToCheck = 0;
@@ -156,18 +175,7 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     else {
         mostPromenentValue = greenToMatch;
         colorToCheck = 1;
-        var redPerc = percentMargin / 1.5;
-        var bluePerc = percentMargin / 1.5;
-        var greenPerc = percentMargin * 4;
     }
-    var total = redToMatch + greenToMatch + blueToMatch;
-    var percRedHigh = redToMatch / total  + redPerc;
-    var percRedLow = redToMatch / total - redPerc;
-    var percGreenHigh = greenToMatch / total + greenPerc;
-    var percGreenLow = greenToMatch / total  - greenPerc;
-    var percBlueHigh = blueToMatch / total + bluePerc;
-    var percBlueLow = blueToMatch / total - bluePerc;
-
     var displayedImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
     var displayedData = displayedImageData.data;
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -199,10 +207,71 @@ var changeColors = function (colorToMatch, newColors, percentMargin) {
     return (displayedImageData);
 }
 
-var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, placeInArray, foundPixelList)
+var resetArrayFoundPixels = function()
+{
+    pixelsToRecolorList = [];
+}
+
+
+var parsePicture = function(colorToMatch, colorNum, percentMargin)
+{
+    var redToMatch = colorToMatch[0];
+    var greenToMatch = colorToMatch[1];
+    var blueToMatch = colorToMatch[2];
+
+    var mostPromenentValue = getMostPromenentValue(colorToMatch);
+
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var data = imageData.data;
+
+    for (var i = 0; i < data.length; i += 4) 
+    {
+        var currentPixel = [data[i], data[i + 1], data[i + 2]];
+        var pixelIndex = i / 4;
+        checkPixel(colorToMatch,data, pixelIndex, getMostPromenentValue(colorToMatch), colorNum); //checks pixel and updates its list
+    }
+
+}
+
+var getMostPromenentValue = function(colorToCheck)
+{
+    if (colorToCheck[0] >= colorToCheck[2] && colorToCheck[0] >= colorToCheck[1]) 
+    {
+        return(1);
+    }
+    else if (colorToCheck[1] >= colorToCheck[2] && colorToCheck[1] >= colorToCheck[0]) 
+    {
+        return(1);
+    }
+    else 
+    {
+        return(2);
+    }
+}
+
+//checks to see if the pixel should be changed in recoloring or not
+var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colorNumber)
+{
+    var translatedPixPosition = pixIndex * 4;
+    var candidateColors = [];
+    candidateColors[0] = data[translatedPixPosition];
+    candidateColors[1] = data[translatedPixPosition + 1];
+    candidateColors[2] = data[translatedPixPosition + 2];
+    if (checkColorMatch(colorToMatch, currentPixel, percentMargin, pixelIndex, foundPixels) == true)
+    {
+        (pixelsToRecolorList[colorNumber])[pixIndex] = true;
+    }
+    else
+    {
+        (pixelsToRecolorList[colorNumber])[pixIndex] = false;
+    }
+}
+
+//returns true if color should be changed, false otherwise
+var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, placeInArray)
     {
         //if color doesn't even romtely match, don't waste resources on other checks
-        if (initialColorCheck(colorsToMatch, candidatePixel, placeInArray, foundPixelList) == false)
+        if (initialColorCheck(colorsToMatch, candidatePixel, placeInArray) == false)
         {
             return;
         }
@@ -243,26 +312,6 @@ var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, pla
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
-            //console.log("R To B percent: " + RToBPerc);
-            /*
-            if(RToBCand < RToB + percentMargin && RToBCand > RToB - percentMargin &&
-                RToGCand < RToG  + percentMargin && RToGCand > RToG - percentMargin &&
-                GToBCand < GToB + percentMargin && GToBCand > GToB - percentMargin)
-            {
-                console.log("matching RG " + RToGCand + " to " + RToG);
-                console.log("matching RB " + RToBCand + " to " + RToG);
-                console.log("matching GB " + GToBCand + " to " + GToB); 
-                return(true);
-            }
-            else
-            {
-                return(false);
-            }
-            */
-            //console.log("R to b is " + RToBPerc + " beacuse " + RToB_Distance + " " + RToB_Ratio + " " + RToB_Cand_Distance + " " + RToB_Cand_Ratio);
-            //console.log("R to g is " + RToGPerc);
-            //console.log("G to B is " + GToBPerc);
-            //console.log("returned false because " + totalPerc + " is greater than " + percentMargin);
         else
         {
             return (false);
@@ -427,10 +476,23 @@ var parseColor = function (colorToParse)
 var main = function ()
 {
     setUpCanvas();
-    resetCanvas(startPic);
+    //resetCanvas();
     setUpOptions();
     attachHandlers();
+    loadDefaultOptions();
     currentImageData = displayedCtx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+var loadDefaultOptions = function()
+{
+    var loadDefaults = setInterval(function () {
+        var styleOption = $('.styleOption');
+        if(styleOption != undefined)
+        {
+            changeStyle(styleOption);
+            clearInterval(loadDefaults);
+        }
+    }, 100);
 }
 
 var previewChangeInnerColor = function(newInner)
@@ -440,6 +502,7 @@ var previewChangeInnerColor = function(newInner)
 
 var changeInnerColor = function (innerObject)
 {
+    loadNewColor(getBackgroundImageFromUrl(innerObject.css("background-color")));
     if (chosenInnerColorObject != null && chosenInnerColorObject != innerObject)
     {
         chosenInnerColorObject.children("img").css("border-style", "hidden");
@@ -450,7 +513,6 @@ var changeInnerColor = function (innerObject)
     currentInnerRGB = newInner;
     currentImageData = changeColors(snapInner, parseColor(newInner), 0.2);
 }
-
 
 var previewChangeOuterColor = function (newOuter)
 {
@@ -535,18 +597,34 @@ var attachHandlers = function () {
     }, 100);
 }
 
-var changeStyle = function(newStyleObject)
+
+var changeStyle = function(newStyleObject)8
 {
     if (newStyleObject == chosenStyleObject)
     {
         return;
     }
-    var picturePath = newStyleObject.css("background-image");
-    var startPart = picturePath.indexOf(startPath);
-    var endPart = picturePath.indexOf('"', startPart);
-    picturePath = picturePath.substring(startPart, endPart);
+    var picturePath = getBackgroundImageFromUrl(newStyleObject.css("background-image"));
     chosenStyleObject = newStyleObject;
     resetCanvas(picturePath);
+    resetArrayFoundPixels();
+    var numColors = 1;
+    newStyleObject.find('color').each(function(){
+        var newArray = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
+        pixelsToRecolorList[numColors] = newArray;
+        parsePicture(parseColor($(this).css("background-color")), numColors, .5); //still need to insert right percent margin
+        numColors++;
+        //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
+    })
+    alert("num colors is " + numColors);
+   
+}
+
+var getBackgroundImageFromUrl = function(strToUse)
+{
+    var startPart = strToUse.indexOf(startPath);
+    var endPart = strToUse.indexOf('"', startPart);
+    return(strToUse.substring(startPart, endPart));
 }
 
 var changeType = function(newTypeObject)
@@ -559,7 +637,7 @@ var changeType = function(newTypeObject)
     var startPart = picturePath.indexOf(startPath);
     var endPart = picturePath.indexOf('"', startPart);
     picturePath = picturePath.substring(startPart, endPart);
-    chosenTypeObject = newPictureObject;
+    chosenTypeObject = newTypeObject;
     resetCanvas(picturePath);
 }
 
