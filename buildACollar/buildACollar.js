@@ -93,7 +93,7 @@ var adjectPixelFoundCheck = function(pixelNum, foundPixelList)
     //console.log("list length: " + listToCheck.length);
     for (var i = 0; i < listToCheck.length; i++)
     {
-        if (foundPixelList[listToCheck[i]] == true)
+        if (foundPixelList[i] == true)
         {
             //console.log(listToCheck + " is not colored in adjancency to ");
             return (true);
@@ -228,7 +228,7 @@ var parsePicture = function(colorToMatch, colorNum, percentMargin)
     {
         var currentPixel = [data[i], data[i + 1], data[i + 2]];
         var pixelIndex = i / 4;
-        checkPixel(colorToMatch,data, pixelIndex, getMostPromenentValue(colorToMatch), colorNum); //checks pixel and updates its list
+        checkPixel(colorToMatch,data, pixelIndex, getMostPromenentValue(colorToMatch), colorNum, percentMargin); //checks pixel and updates its list
     }
 
 }
@@ -250,14 +250,14 @@ var getMostPromenentValue = function(colorToCheck)
 }
 
 //checks to see if the pixel should be changed in recoloring or not
-var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colorNumber)
+var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colorNumber, percentMargin)
 {
     var translatedPixPosition = pixIndex * 4;
     var candidateColors = [];
     candidateColors[0] = data[translatedPixPosition];
     candidateColors[1] = data[translatedPixPosition + 1];
     candidateColors[2] = data[translatedPixPosition + 2];
-    if (checkColorMatch(colorToMatch, currentPixel, percentMargin, pixelIndex, foundPixels) == true)
+    if (checkColorMatch(colorToMatch, candidateColors, percentMargin, pixIndex, pixelsToRecolorList[colorNumber]) == true)
     {
         (pixelsToRecolorList[colorNumber])[pixIndex] = true;
     }
@@ -268,10 +268,10 @@ var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colo
 }
 
 //returns true if color should be changed, false otherwise
-var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, placeInArray)
+var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, placeInArray, arrayToUse)
     {
         //if color doesn't even romtely match, don't waste resources on other checks
-        if (initialColorCheck(colorsToMatch, candidatePixel, placeInArray) == false)
+        if (initialColorCheck(colorsToMatch, candidatePixel, placeInArray, arrayToUse) == false)
         {
             return;
         }
@@ -338,11 +338,6 @@ var initialColorCheck = function(colorsToMatch, candidatePixel, pixelIndex, foun
 
         var impColor = findMostImportantColor(colorsToMatch);
 
-        /*
-        if((Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * .3 <= candidatePixel[impColor] - candidatePixel[0]) &&
-            (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * .3 <= candidatePixel[impColor] - candidatePixel[1]) &&
-            (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * .3 <= candidatePixel[impColor] - candidatePixel[2]))
-            */
         if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * marginToCheck) < candidatePixel[impColor] || impColor == 0) &&
             (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * marginToCheck) < candidatePixel[impColor] || impColor == 1) &&
             (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * marginToCheck) < candidatePixel[impColor] || impColor == 2)
@@ -598,7 +593,7 @@ var attachHandlers = function () {
 }
 
 
-var changeStyle = function(newStyleObject)8
+var changeStyle = function(newStyleObject)
 {
     if (newStyleObject == chosenStyleObject)
     {
@@ -611,6 +606,10 @@ var changeStyle = function(newStyleObject)8
     var numColors = 1;
     newStyleObject.find('color').each(function(){
         var newArray = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
+        for (var i = 0; i < newArray.length; i++)
+        {
+            newArray[i] = false;
+        }
         pixelsToRecolorList[numColors] = newArray;
         parsePicture(parseColor($(this).css("background-color")), numColors, .5); //still need to insert right percent margin
         numColors++;
