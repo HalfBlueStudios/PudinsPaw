@@ -83,7 +83,7 @@ var resetCanvas = function(newUrl, callbackFunc)
 }
 
 //loads new color, then calls changeColor when completed loading
-var loadNewColor = function(newUrl, colorNum, percentMargin)
+var loadNewColor = function(newUrl, colorNum, percentMargin, permChangeColor)
 {
     colorImage = new Image();
     colorImage.src = newUrl;
@@ -91,8 +91,15 @@ var loadNewColor = function(newUrl, colorNum, percentMargin)
     colorImage.onload = function () {
         coloringCtx.drawImage(colorImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         console.log("starting change color...");
-        return (changeColors(colorNum, percentMargin));
-    }
+        if (permChangeColor == true)
+        {
+            currentImageData = changeColors(colorNum, percentMargin);
+        }
+        else
+        {
+            changeColors(colorNum, percentMargin);
+        }
+    };
 }
 
 
@@ -104,9 +111,10 @@ var adjectPixelFoundCheck = function(pixelNum, foundPixelList)
 {
     var listToCheck = getAdjacentPixelList(pixelNum);
     //console.log("list length: " + listToCheck.length);
+    console.log("checking a list with length of " + listToCheck.length);
     for (var i = 0; i < listToCheck.length; i++)
     {
-        if (foundPixelList[i] == true)
+        if (foundPixelList[listToCheck[i]] == true)
         {
             //console.log(listToCheck + " is not colored in adjancency to ");
             return (true);
@@ -141,6 +149,7 @@ var getAdjacentPixelList = function(indexPix)
     {
         retList.push(indexPix + DRAW_IMAGE_WIDTH);
     }
+    //console.log("at this point we have length of " + retList.length + " with leftedge being " + leftEdgePixel + " and right edge being " + rightEdgePixel);
     retList.forEach(function (pixNumber) {
         if(leftEdgePixel == false)
         {
@@ -151,7 +160,12 @@ var getAdjacentPixelList = function(indexPix)
             retList.push(pixNumber + 1);
         }
     });
-    retList = retList.splice(0, 1); //removes starting pixel from array
+    if (retList.length == 9)
+    {
+        //console.log("returning full array!");
+    }
+    //retList.shift();
+    //retList = retList.splice(0, 1); //removes starting pixel from array
     return (retList);
 }
 
@@ -245,10 +259,29 @@ var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colo
     if (checkColorMatch(colorToMatch, candidateColors, percentMargin, pixIndex, pixelsToRecolorList[colorNumber]) == true)
     {
         (pixelsToRecolorList[colorNumber])[pixIndex] = true;
+        recheckAdjacentPixels(colorToMatch, data, pixIndex, mostPromenentValue, colorNumber, percentMargin);
     }
     else
     {
         (pixelsToRecolorList[colorNumber])[pixIndex] = false;
+    }
+}
+
+var recheckAdjacentPixels = function (colorToMatch, data, pixIndex, mostPromenentValue, colorNumber, percentMargin)
+{
+    adjacent = getAdjacentPixelList(pixIndex);
+    for(i = 0; i < adjacent.length; i++)
+    {
+        pixIndexToCheck = adjacent[i];
+        if(pixelsToRecolorList[colorNumber][pixIndexToCheck] == false)
+        {
+            //console.log("rechecking " + pixIndexToCheck);
+            checkPixel(colorToMatch, data, pixIndexToCheck, mostPromenentValue, colorNumber, percentMargin);
+            if(pixelsToRecolorList[colorNumber][pixIndexToCheck] == true)
+            {
+                console.log("changed pixel!");
+            }
+        }
     }
 }
 
@@ -318,7 +351,7 @@ var initialColorCheck = function(colorsToMatch, candidatePixel, pixelIndex, foun
         var marginToCheck = .4;
         if (adjectPixelFoundCheck(pixelIndex, foundPixelList) == true)
         {
-            marginToCheck /= 1.4;
+            marginToCheck /= 2;
         }
 
         var impColor = findMostImportantColor(colorsToMatch);
@@ -468,7 +501,24 @@ var loadDefaultOptions = function()
 var previewChangeInnerColor = function(newInner)
 {
     var newUrl = getBackgroundImageFromUrl(newInner);
-    loadNewColor(newUrl, 1, 0.2);
+    loadNewColor(newUrl, 1, 0.2, false);
+}
+
+var previewChangeColor = function(newColorObj)
+{
+    var newPicUrl = getBackgroundImageFromUrl(newColorObj.children("img").css("background-image"));
+    var optionType = newColorObj.parent().parent().attr('id');
+    var colorNum = optionType[optionType.length - 1]; //gets what number color the color selected belongs to
+    loadNewColor(newPicUrl, colorNum, 0.2, false);
+}
+
+var changeColor = function(newColorObj)
+{
+    var newPicUrl = getBackgroundImageFromUrl(newColorObj.children("img").css("background-image"));
+    var optionType = newColorObj.parent().parent().attr('id');
+    var colorNum = optionType[optionType.length - 1]; //gets what number color the color selected belongs to
+    newColorObj.children("img").css("border-style","solid");
+    loadNewColor(newPicUrl, colorNum, 0.2, true);
 }
 
 var changeInnerColor = function (innerObject)
@@ -484,8 +534,7 @@ var changeInnerColor = function (innerObject)
     currentInnerRGB = newInner;
     var newUrl = getBackgroundImageFromUrl(innerObject.children("img").css("background-image"));
     console.log("new url is " + newUrl);
-
-    currentImageData = loadNewColor(newUrl,1, 0.2);
+    currentImageData = loadNewColor(newUrl,1, 0.2, true);
 }
 
 var previewChangeOuterColor = function (newOuter)
@@ -507,6 +556,7 @@ var changeOuterColor = function(outerObject)
 
 var attachHandlers = function () {
     var setUpElements = setInterval(function () {
+        console.log("setting handles...");
         $('.colorOption').find('img').each(
       function () {
           clearInterval(setUpElements);
@@ -514,6 +564,8 @@ var attachHandlers = function () {
       );
         $('.colorOption').mouseover(
             function () {
+                previewChangeColor($(this));
+                /*
                 var optionType = $(this).parent().parent().attr('id');
                 if (optionType == "colorOptionBox1") {
                     previewChangeInnerColor($(this).children("img").css("background-image"));
@@ -521,12 +573,15 @@ var attachHandlers = function () {
                 else if (optionType == "colorOptionBox2") {
                     previewChangeOuterColor($(this).children("img").css("background-color"));
                 }
+                */
 
             }
         );
 
         $('.colorOption').click(
             function () {
+                changeColor($(this));
+                /*
                 var optionType = $(this).parent().parent().attr('id');
                 if (optionType == "colorOptionBox1") {
                     changeInnerColor($(this));
@@ -534,6 +589,7 @@ var attachHandlers = function () {
                 else if (optionType == "colorOptionBox2") {
                     changeOuterColor($(this));
                 }
+                */
 
             }
         );
@@ -605,12 +661,13 @@ var finishChangingStyle = function()
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
     loadAllColors(numColors);
+    attachHandlers();
 }
 
 var addNewColorOptionRow = function(colorNum)
 {
     $("." + NAME_OF_COLOR_HOLDER).append("<div class=\"pictureOptionBox\">" +
-                                         "<h1>Select the " + colorNum + "th color</h1>" +
+                                         "<h1>Select the " + colorNum + getNumberEnding(colorNum) + " color</h1>" +
                                          "<div class=\"pictureOptions\" id=\"colorOptionBox" + colorNum + "\"></div>" + 
                                          "</div>"
      );
