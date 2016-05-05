@@ -23,7 +23,7 @@
             <div class="previewCanvas">
                 <canvas id="backgroundCanvas"></canvas>
                 <canvas id="displayedCanvas" ></canvas>
-                <canvas style="z-index:8" id="coloringCanvas"></canvas>
+                <canvas style="position:absolute; z-index:-8" id="coloringCanvas"></canvas>
             </div>
 
             <div class="allOptions">
@@ -41,19 +41,21 @@
                 </div>
 
                 <br/>
+                <div class="colorOptions">
+                    <div class="pictureOptionBox">
+                        <h1>Choose the 1st color:</h1>
+                        <div class="pictureOptions" id="colorOptions1"></div>
 
-                <div class="pictureOptionBox">
-                    <h1>Choose the inner color:</h1>
-                    <div class="pictureOptions" id="colorOptions1"></div>
-                    
+                    </div>
+
+                    <br />
+
+                    <div class="pictureOptionBox">
+                        <h1>Choose the 2nd color:</h1>
+                        <div class="pictureOptions" id="colorOptions2"></div>
+                    </div>
                 </div>
 
-                <br/>
-                
-                <div class="pictureOptionBox">
-                    <h1>Choose the outer color:</h1>
-                    <div class="pictureOptions" id="colorOptions2"></div>
-                </div>
 
                 <br />
 
