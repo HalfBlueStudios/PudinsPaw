@@ -1,4 +1,7 @@
-﻿var ctx;
+﻿const NAME_OF_COLOR_HOLDER = "colorOptions";
+
+
+var ctx;
 var canvas;
 var baseImage;
 
@@ -33,6 +36,8 @@ var chosenTypeObject;
 
 var chosenSizeObject;
 var pixelsToRecolorList = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
+var mostImportantValuesList = [] //list with the most important value, followed by the number(0-2 to signify red, green, or blue) that it will be compared with
+                                //to find value for a certain color number, do colornum * 2;
 
 const startPic = "homepage/images/snapbackProduct.png"; //"buildACollar/baseTypeImages/snapBase.jpg";
 const startPath = "buildACollar";
@@ -42,6 +47,8 @@ var setUpCanvas = function()
 {
     $('#coloringCanvas').css("width", IMAGE_WIDTH); //coloring canvas used to load picture of new color/image and use that picture to recolor the collar
     $('#coloringCanvas').css("height", IMAGE_HEIGHT);
+    $('#coloringCanvas').css("margin-top", "-" + IMAGE_HEIGHT + "px");
+
     $('#backgroundCanvas').css("margin-right", "-" + IMAGE_WIDTH + "px"); //used to hold the orignal collar so that changes are not permanent to canvas
     $('#backgroundCanvas').css("width", IMAGE_WIDTH);
     $('#backgroundCanvas').css("height", IMAGE_HEIGHT);
@@ -62,23 +69,29 @@ var setUpCanvas = function()
     canvasPosition = parseInt($('.previewCanvas').position().top);
 }
 
-var resetCanvas = function(newUrl)
+var resetCanvas = function(newUrl, callbackFunc)
 {
+    imageLoaded = false;
     baseImage = new Image();
     baseImage.src = newUrl;
     baseImage.onload = function () {
         ctx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         displayedCtx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
+        callbackFunc();
     }
 }
 
-var loadNewColor = function(newUrl)
+//loads new color, then calls changeColor when completed loading
+var loadNewColor = function(newUrl, colorNum, percentMargin)
 {
     colorImage = new Image();
     colorImage.src = newUrl;
+    console.log("starting new load of " + newUrl + " ...");
     colorImage.onload = function () {
         coloringCtx.drawImage(colorImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
+        console.log("starting change color...");
+        return (changeColors(colorNum, percentMargin));
     }
 }
 
@@ -143,73 +156,44 @@ var getAdjacentPixelList = function(indexPix)
 }
 
 
-
-var changeColors = function (colorToMatch, newColors, percentMargin) {
-
-    var redToMatch = colorToMatch[0];
-    var greenToMatch = colorToMatch[1];
-    var blueToMatch = colorToMatch[2];
-    
-    for (var i = 0; i < foundPixels.length; i++)
-    {
-        foundPixels[i] = false;
-    }
-
-    var mostPromenentValue;
-    var numPixels = 0;
-    var redToUse = newColors[0];
-    var greenToUse = newColors[1];
-    var blueToUse = newColors[2];
-
-
-    var colorToCheck;
-
-    if (redToMatch >= blueToMatch && redToMatch >= greenToMatch) {
-        mostPromenentValue = redToMatch;
-        colorToCheck = 0;
-    }
-    else if (blueToMatch >= greenToMatch && blueToMatch >= redToMatch) {
-        mostPromenentValue = blueToMatch;
-        colorToCheck = 2;
-    }
-    else {
-        mostPromenentValue = greenToMatch;
-        colorToCheck = 1;
-    }
+var changeColors = function (colorNum, percentMargin)
+{
     var displayedImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
     var displayedData = displayedImageData.data;
+
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
-    var canvasToPut = canvas;
-    var canvasToPutData = canvasToPut.getContext("2d");
-    for (var i = 0; i < data.length; i += 4) {
-        var currentPixel = [data[i], data[i + 1], data[i + 2]];
+
+    var coloringImageData = coloringCtx.getImageData(0, 0, canvas.width, canvas.height);
+    var coloringData = coloringImageData.data;
+
+    var numPixels = 0;
+    for (var i = 0; i < data.length; i += 4)
+    {
         var pixelIndex = i / 4;
-        if (checkColorMatch(colorToMatch, currentPixel, percentMargin, pixelIndex, foundPixels) == true)
+        if (pixelsToRecolorList[colorNum][pixelIndex] == true)
         {
-            var pixelTotal = data[i] + data[i + 1] + data[i + 2];
-            var testRed = data[i] / pixelTotal;
-            var testGreen = data[i + 1] / pixelTotal;
-            var testBlue = data[i + 2] / pixelTotal;
-                var percentToUse = data[i + colorToCheck] / mostPromenentValue;
-                displayedData[i] = redToUse * percentToUse;//(data[i] / redToUse) * redToUse;
-                displayedData[i + 1] = greenToUse * percentToUse; //(data[i + 1] / greenToUse) * greenToUse;
-                displayedData[i + 2] = blueToUse * percentToUse; //(data[i + 2] / blueToUse) * blueToUse;
-                numPixels++;
-                foundPixels[pixelIndex] = true;
-        }
-        else
-        {
-            foundPixels[pixelIndex] = false;
+            var redToUse = coloringData[i];
+            var greenToUse = coloringData[i + 1];
+            var blueToUse = coloringData[i + 2];
+            var percentToUse = data[i + mostImportantValuesList[colorNum * 2]] / mostImportantValuesList[(colorNum * 2) - 1];
+            displayedData[i] = redToUse * percentToUse
+            displayedData[i + 1] = greenToUse * percentToUse;
+            displayedData[i + 2] = blueToUse * percentToUse;
+            numPixels++;
         }
     }
     displayedCtx.putImageData(displayedImageData, 0, 0);
     return (displayedImageData);
 }
 
-var resetArrayFoundPixels = function()
+var resetStyle = function()
 {
     pixelsToRecolorList = [];
+    mostImportantValuesList = [];
+    $("." + NAME_OF_COLOR_HOLDER).html("");
+
+
 }
 
 
@@ -257,6 +241,7 @@ var checkPixel = function(colorToMatch, data, pixIndex, mostPromenentValue, colo
     candidateColors[0] = data[translatedPixPosition];
     candidateColors[1] = data[translatedPixPosition + 1];
     candidateColors[2] = data[translatedPixPosition + 2];
+
     if (checkColorMatch(colorToMatch, candidateColors, percentMargin, pixIndex, pixelsToRecolorList[colorNumber]) == true)
     {
         (pixelsToRecolorList[colorNumber])[pixIndex] = true;
@@ -387,7 +372,6 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
             perRatio = Math.abs(colorRatio - candRatio);
         }
         if (isNaN(Math.abs(colorDistance))) {
-            alert("stop 1!");
         }
 
 
@@ -416,19 +400,12 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
             }
             var ammountBetween = candDistance - (colorDistance * counter);
             var divideAmmount = (Math.abs(colorDistance - ammountBetween) == 0) ? 1 : (Math.abs(colorDistance - ammountBetween));
-            if(isNaN(Math.abs(colorDistance - ammountBetween))) 
-            {
-                alert("stop 2!");
-            }
             distance_perc += Math.abs(colorDistance / divideAmmount);
         }
         else if (distance_perc > 1)
         {
             var ammountBetween = candDistance - colorDistance;
             var divideAmmount = (Math.abs(colorDistance - ammountBetween) == 0) ? 1 : (Math.abs(colorDistance - ammountBetween));
-            if (isNaN(Math.abs(colorDistance - ammountBetween))) {
-                alert("stop 3!");
-            }
             distance_perc = Math.abs(colorDistance / divideAmmount);
         }
         if (multiplyByTwo == true)
@@ -471,11 +448,9 @@ var parseColor = function (colorToParse)
 var main = function ()
 {
     setUpCanvas();
-    //resetCanvas();
     setUpOptions();
     attachHandlers();
     loadDefaultOptions();
-    currentImageData = displayedCtx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 var loadDefaultOptions = function()
@@ -492,12 +467,13 @@ var loadDefaultOptions = function()
 
 var previewChangeInnerColor = function(newInner)
 {
-    changeColors(snapInner, parseColor(newInner), 200);
+    var newUrl = getBackgroundImageFromUrl(newInner);
+    loadNewColor(newUrl, 1, 0.2);
 }
 
 var changeInnerColor = function (innerObject)
 {
-    loadNewColor(getBackgroundImageFromUrl(innerObject.css("background-color")));
+    console.log("background image is " + innerObject.children("img").css("background-image"));
     if (chosenInnerColorObject != null && chosenInnerColorObject != innerObject)
     {
         chosenInnerColorObject.children("img").css("border-style", "hidden");
@@ -506,7 +482,10 @@ var changeInnerColor = function (innerObject)
     chosenInnerColorObject = innerObject;
     var newInner = innerObject.children("img").css("background-color");
     currentInnerRGB = newInner;
-    currentImageData = changeColors(snapInner, parseColor(newInner), 0.2);
+    var newUrl = getBackgroundImageFromUrl(innerObject.children("img").css("background-image"));
+    console.log("new url is " + newUrl);
+
+    currentImageData = loadNewColor(newUrl,1, 0.2);
 }
 
 var previewChangeOuterColor = function (newOuter)
@@ -536,10 +515,10 @@ var attachHandlers = function () {
         $('.colorOption').mouseover(
             function () {
                 var optionType = $(this).parent().parent().attr('id');
-                if (optionType == "colorOptions1") {
-                    previewChangeInnerColor($(this).children("img").css("background-color"));
+                if (optionType == "colorOptionBox1") {
+                    previewChangeInnerColor($(this).children("img").css("background-image"));
                 }
-                else if (optionType == "colorOptions2") {
+                else if (optionType == "colorOptionBox2") {
                     previewChangeOuterColor($(this).children("img").css("background-color"));
                 }
 
@@ -549,10 +528,10 @@ var attachHandlers = function () {
         $('.colorOption').click(
             function () {
                 var optionType = $(this).parent().parent().attr('id');
-                if (optionType == "colorOptions1") {
+                if (optionType == "colorOptionBox1") {
                     changeInnerColor($(this));
                 }
-                else if (optionType == "colorOptions2") {
+                else if (optionType == "colorOptionBox2") {
                     changeOuterColor($(this));
                 }
 
@@ -601,22 +580,62 @@ var changeStyle = function(newStyleObject)
     }
     var picturePath = getBackgroundImageFromUrl(newStyleObject.css("background-image"));
     chosenStyleObject = newStyleObject;
-    resetCanvas(picturePath);
-    resetArrayFoundPixels();
+    resetCanvas(picturePath, finishChangingStyle);
+}
+
+//second half to change style function - gets called once loading of picture completes
+var finishChangingStyle = function()
+{
+    resetStyle();
     var numColors = 1;
-    newStyleObject.find('color').each(function(){
+    chosenStyleObject.find('color').each(function () {
+        addNewColorOptionRow(numColors);
         var newArray = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
         for (var i = 0; i < newArray.length; i++)
         {
             newArray[i] = false;
         }
         pixelsToRecolorList[numColors] = newArray;
+        var newColors = (parseColor($(this).css("background-color")));
+        var mostImpVal = getMostPromenentValue(newColors);
+        mostImportantValuesList[(numColors * 2) - 1] = newColors[mostImpVal];
+        mostImportantValuesList[numColors * 2] = mostImpVal;
         parsePicture(parseColor($(this).css("background-color")), numColors, .5); //still need to insert right percent margin
         numColors++;
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
-    alert("num colors is " + numColors);
-   
+    loadAllColors(numColors);
+}
+
+var addNewColorOptionRow = function(colorNum)
+{
+    $("." + NAME_OF_COLOR_HOLDER).append("<div class=\"pictureOptionBox\">" +
+                                         "<h1>Select the " + colorNum + "th color</h1>" +
+                                         "<div class=\"pictureOptions\" id=\"colorOptionBox" + colorNum + "\"></div>" + 
+                                         "</div>"
+     );
+    
+
+}
+
+var getNumberEnding = function(numToCheck)
+{
+    if(numToCheck == 1)
+    {
+        return "st";
+    }
+    if(numToCheck == 2)
+    {
+        return "nd";
+    }
+    if( numToCheck == 3)
+    {
+        return "rd";
+    }
+    else
+    {
+        return "th";
+    }
 }
 
 var getBackgroundImageFromUrl = function(strToUse)
@@ -645,10 +664,32 @@ var resetColor = function()
     displayedCtx.putImageData(currentImageData, 0,0);
 }
 
+//loads color options into each option box
+var loadAllColors = function(numColors)
+{
+    var loadColors = setInterval(function ()
+    {
+        var numLoaded = 0;
+        for (i = 1; i < numColors; i++)
+        {
+            var searchString = '#colorOptionBox' + i;
+            $('.colorOptions').find(searchString).each(function () {
+                numLoaded++;
+                $(this).load("buildACollar/options.html #regularColors");
+            }
+            );
+        }
+        if(numLoaded == numColors - 1)
+        {
+            clearInterval(loadColors);
+        }
+    });
+}
+
 var setUpOptions = function()
 {
-    $('#colorOptions1').load("buildACollar/options.html #regularColors");
-    $('#colorOptions2').load("buildACollar/options.html #regularColors");
+    //$('#colorOptions1').load("buildACollar/options.html #regularColors");
+    //$('#colorOptions2').load("buildACollar/options.html #regularColors");
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
     $('#typeSelectOptions').load("buildACollar/options.html #types");
     $('#sizeSelectOptions').load("buildACollar/options.html #sizes");
