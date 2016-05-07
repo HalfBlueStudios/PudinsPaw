@@ -90,7 +90,6 @@ var loadNewColor = function(newUrl, colorNum, percentMargin, permChangeColor)
     console.log("starting new load of " + newUrl + " ...");
     colorImage.onload = function () {
         coloringCtx.drawImage(colorImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
-        console.log("starting change color...");
         if (permChangeColor == true)
         {
             currentImageData = changeColors(colorNum, percentMargin);
@@ -102,7 +101,6 @@ var loadNewColor = function(newUrl, colorNum, percentMargin, permChangeColor)
     };
 }
 
-
 var drawImage = function () {
     ctx.drawImage(imageToUse, 0, 0);
 }
@@ -110,44 +108,47 @@ var drawImage = function () {
 var adjectPixelFoundCheck = function(pixelNum, foundPixelList)
 {
     var listToCheck = getAdjacentPixelList(pixelNum);
+    var retVal = 1;
     //console.log("list length: " + listToCheck.length);
-    console.log("checking a list with length of " + listToCheck.length);
     for (var i = 0; i < listToCheck.length; i++)
     {
         if (foundPixelList[listToCheck[i]] == true)
         {
             //console.log(listToCheck + " is not colored in adjancency to ");
-            return (true);
+            retVal++;
         }
         else
         {
             //console.log(listToCheck + " is not colored in adjancency to ");
         }
     }
-    return (false);
+    return (retVal);
 }
 
 var getAdjacentPixelList = function(indexPix)
 {
+    var canvasWidth = canvas.width;
+    var canvasHeight = canvas.height;
+
     var retList = [];
     retList.push(indexPix);
     var leftEdgePixel = false;
     var rightEdgePixel = false;
-    if(indexPix % DRAW_IMAGE_WIDTH == 0)
+    if(indexPix % canvasWidth == 0)
     {
         leftEdgePixel = true;
     }
-    else if(indexPix + 1 % DRAW_IMAGE_WIDTH == 0)
+    else if(indexPix + 1 % canvasWidth == 0)
     {
         rightEdgePixel = true
     }
-    if(indexPix - DRAW_IMAGE_WIDTH >= 0)
+    if(indexPix - canvasWidth >= 0)
     {
-        retList.push(indexPix - DRAW_IMAGE_WIDTH);
+        retList.push(indexPix - canvasWidth);
     }
-    if(indexPix + DRAW_IMAGE_WIDTH <= (DRAW_IMAGE_HEIGHT * DRAW_IMAGE_WIDTH))
+    if(indexPix + canvasWidth <= (canvasHeight * canvasWidth))
     {
-        retList.push(indexPix + DRAW_IMAGE_WIDTH);
+        retList.push(indexPix + canvasWidth);
     }
     //console.log("at this point we have length of " + retList.length + " with leftedge being " + leftEdgePixel + " and right edge being " + rightEdgePixel);
     retList.forEach(function (pixNumber) {
@@ -160,15 +161,24 @@ var getAdjacentPixelList = function(indexPix)
             retList.push(pixNumber + 1);
         }
     });
-    if (retList.length == 9)
-    {
-        //console.log("returning full array!");
-    }
-    //retList.shift();
-    //retList = retList.splice(0, 1); //removes starting pixel from array
     return (retList);
 }
 
+var getXYCordinate = function(numToCheck)
+{ 
+    width = IMAGE_WIDTH;
+    orgY = (numToCheck / width);
+    retY = (numToCheck / width).toFixed(0);
+    if (retY > orgY)
+    {
+        retY--;
+    }
+    retX = numToCheck - (width * retY);
+    var retArray = [];
+    retArray[0] = retX; 
+    retArray[1] = retY;
+    return(retArray);
+}
 
 var changeColors = function (colorNum, percentMargin)
 {
@@ -209,7 +219,6 @@ var resetStyle = function()
 
 
 }
-
 
 var parsePicture = function(colorToMatch, colorNum, percentMargin)
 {
@@ -273,13 +282,13 @@ var recheckAdjacentPixels = function (colorToMatch, data, pixIndex, mostPromenen
     for(i = 0; i < adjacent.length; i++)
     {
         pixIndexToCheck = adjacent[i];
-        if(pixelsToRecolorList[colorNumber][pixIndexToCheck] == false)
+        if(pixelsToRecolorList[colorNumber][pixIndexToCheck] != true)
         {
             //console.log("rechecking " + pixIndexToCheck);
             checkPixel(colorToMatch, data, pixIndexToCheck, mostPromenentValue, colorNumber, percentMargin);
             if(pixelsToRecolorList[colorNumber][pixIndexToCheck] == true)
             {
-                console.log("changed pixel!");
+                //console.log("changed pixel!");
             }
         }
     }
@@ -326,7 +335,7 @@ var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, pla
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = 2000;
+        var percToUse = 2;
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
@@ -336,7 +345,6 @@ var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, pla
         }
 
     }
-
 
 var initialColorCheck = function(colorsToMatch, candidatePixel, pixelIndex, foundPixelList)
     {
@@ -349,16 +357,13 @@ var initialColorCheck = function(colorsToMatch, candidatePixel, pixelIndex, foun
         var candBlue = candidatePixel[2];
 
         var marginToCheck = .4;
-        if (adjectPixelFoundCheck(pixelIndex, foundPixelList) == true)
-        {
-            marginToCheck /= 2;
-        }
-
+        var numAdjacent = adjectPixelFoundCheck(pixelIndex, foundPixelList);
+        marginToCheck /= numAdjacent;
         var impColor = findMostImportantColor(colorsToMatch);
 
-        if ((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0]) * marginToCheck) < candidatePixel[impColor] || impColor == 0) &&
-            (candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1]) * marginToCheck) < candidatePixel[impColor] || impColor == 1) &&
-            (candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2]) * marginToCheck) < candidatePixel[impColor] || impColor == 2)
+        if (((candidatePixel[0] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[0])) * marginToCheck) < candidatePixel[impColor] || impColor == 0) &&
+            ((candidatePixel[1] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[1])) * marginToCheck) < candidatePixel[impColor] || impColor == 1) &&
+            ((candidatePixel[2] + (Math.abs(colorsToMatch[impColor] - colorsToMatch[2])) * marginToCheck) < candidatePixel[impColor] || impColor == 2)
             )
         {
             return (true);
@@ -498,12 +503,6 @@ var loadDefaultOptions = function()
     }, 100);
 }
 
-var previewChangeInnerColor = function(newInner)
-{
-    var newUrl = getBackgroundImageFromUrl(newInner);
-    loadNewColor(newUrl, 1, 0.2, false);
-}
-
 var previewChangeColor = function(newColorObj)
 {
     var newPicUrl = getBackgroundImageFromUrl(newColorObj.children("img").css("background-image"));
@@ -521,38 +520,6 @@ var changeColor = function(newColorObj)
     loadNewColor(newPicUrl, colorNum, 0.2, true);
 }
 
-var changeInnerColor = function (innerObject)
-{
-    console.log("background image is " + innerObject.children("img").css("background-image"));
-    if (chosenInnerColorObject != null && chosenInnerColorObject != innerObject)
-    {
-        chosenInnerColorObject.children("img").css("border-style", "hidden");
-    }
-    innerObject.children("img").css("border-style", "solid");
-    chosenInnerColorObject = innerObject;
-    var newInner = innerObject.children("img").css("background-color");
-    currentInnerRGB = newInner;
-    var newUrl = getBackgroundImageFromUrl(innerObject.children("img").css("background-image"));
-    console.log("new url is " + newUrl);
-    currentImageData = loadNewColor(newUrl,1, 0.2, true);
-}
-
-var previewChangeOuterColor = function (newOuter)
-{
-   changeColors(snapOuter,parseColor(newOuter), 0.4);
-}
-
-var changeOuterColor = function(outerObject)
-{
-    if (chosenOuterColorObject != null && chosenOuterColorObject != outerObject) {
-        chosenOuterColorObject.children("img").css("border-style", "hidden");
-    }
-    outerObject.children("img").css("border-style", "solid");
-    chosenOuterColorObject = outerObject;
-    var newOuter = outerObject.children("img").css("background-color");
-    currentOuterRGB = newOuter;
-    currentImageData = changeColors(snapOuter,parseColor(newOuter),0.2);
-}
 
 var attachHandlers = function () {
     var setUpElements = setInterval(function () {
