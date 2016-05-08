@@ -57,13 +57,19 @@ var setUpCanvas = function()
     $('#displayedCanvas').css("height", IMAGE_HEIGHT);
 
     canvas = document.getElementById("backgroundCanvas");
+    canvas.style.width = IMAGE_WIDTH / 2;
+    canvas.style.height = IMAGE_HEIGHT / 2;
     ctx = canvas.getContext('2d');
 
     displayedCanvas = document.getElementById("displayedCanvas");
     displayedCtx = displayedCanvas.getContext('2d');
+    displayedCanvas.style.width = IMAGE_WIDTH / 2;
+    displayedCanvas.style.height = IMAGE_HEIGHT / 2;
 
     coloringCanvas = document.getElementById("coloringCanvas");
     coloringCtx = coloringCanvas.getContext('2d');
+    coloringCanvas.style.width = IMAGE_WIDTH / 2;
+    coloringCanvas.style.height = IMAGE_HEIGHT / 2;
 
     canvasHeight = parseInt($('.previewCanvas').css('height'));
     canvasPosition = parseInt($('.previewCanvas').position().top);
@@ -335,7 +341,8 @@ var checkColorMatch = function(colorsToMatch, candidatePixel, percentMargin, pla
         var RToGPerc = getPercentToColor(RToG_Distance, RToG_Ratio, RToG_Cand_Distance, RToG_Cand_Ratio);
         var GToBPerc = getPercentToColor(GToB_Distance, GToB_Ratio, GToB_Cand_Distance, GToB_Cand_Ratio);
         var totalPerc = RToBPerc + RToGPerc + GToBPerc;
-        var percToUse = 2;
+        var numAdj = adjectPixelFoundCheck(placeInArray, arrayToUse);
+        var percToUse = percentMargin * numAdj; //30 * numAdj;
         if (RToBPerc < percToUse && RToGPerc < percToUse  && GToBPerc < percToUse) {
             return (true);
         }
@@ -619,11 +626,12 @@ var finishChangingStyle = function()
             newArray[i] = false;
         }
         pixelsToRecolorList[numColors] = newArray;
+        //gets new colors from options.html file, alpha is the percentage match to use
         var newColors = (parseColor($(this).css("background-color")));
         var mostImpVal = getMostPromenentValue(newColors);
         mostImportantValuesList[(numColors * 2) - 1] = newColors[mostImpVal];
         mostImportantValuesList[numColors * 2] = mostImpVal;
-        parsePicture(parseColor($(this).css("background-color")), numColors, .5); //still need to insert right percent margin
+        parsePicture(parseColor($(this).css("background-color")), numColors, $(this).text()); //still need to insert right percent margin
         numColors++;
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
