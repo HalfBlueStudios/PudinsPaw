@@ -1,5 +1,10 @@
 ﻿const NAME_OF_COLOR_HOLDER = "colorOptions";
+const NAME_OF_ALL_OPTIONS = ".allOptions"
+const NAME_OF_CURRENT_SELECTION = ".currentSelectionChoice";
+const NAME_OF_PREVIOUS_SELECTIONS = ".previousSelections";
 
+
+var currentOptionNumber = 0;
 
 var ctx;
 var canvas;
@@ -42,6 +47,7 @@ var mostImportantValuesList = [] //list with the most important value, followed 
 const startPic = "homepage/images/snapbackProduct.png"; //"buildACollar/baseTypeImages/snapBase.jpg";
 const startPath = "buildACollar";
 
+var finishedLoading = true;
 
 var setUpCanvas = function()
 {
@@ -466,8 +472,48 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
 
 
 
+/*------------------Selection made------------------------------------
+    Function to change the current selection into previous selection list
+    then animates previous selection list down to accomidate new selection
+    finally loads new option into current selectiom
+*/
+var selectionMade = function()
+{
+    var nextOption = $(NAME_OF_ALL_OPTIONS).children().eq(currentOptionNumber);
+    if (nextOption.attr('class') != undefined)
+    {
+        $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "+=" + nextOption.css("height") }, 1000, function () {
+            finishSelection(nextOption);
+        });
+    }
+    currentOptionNumber++;
+    //attachHandlers();
+}
 
-
+/*-----------------------finish Selection-----------------------------------
+    Sister function to selectionMade
+    Executes once the animation for selecting an option has completed
+    finishes change the styles and loads in new one
+*/
+var finishSelection = function(nextOption)
+{
+    console.log("in finished selection");
+    $(NAME_OF_PREVIOUS_SELECTIONS).prepend($(NAME_OF_CURRENT_SELECTION).html());
+    $(NAME_OF_CURRENT_SELECTION).css("margin-top", "-=" + nextOption.css("height"));
+    var classDec = "<div style=\"opacity:0\" class = '" + nextOption.attr('class') + "'>"
+    $(NAME_OF_CURRENT_SELECTION).html(classDec + nextOption.html());
+    var newSelection = $(NAME_OF_CURRENT_SELECTION).find("." + nextOption.attr('class'));
+    if (newSelection == undefined)
+    {
+        console.log("undefined!");
+    }
+    else
+    {
+        console.log("class: " + newSelection.attr('class'));
+    }
+    newSelection.animate({opacity: + 1000},8000)
+    //nextOption.fadeIn(4000);
+}
 
 
 
@@ -503,11 +549,13 @@ var main = function ()
 
 var loadDefaultOptions = function()
 {
+    var numX = 0;
     var loadDefaults = setInterval(function () {
         var styleOption = $('.styleOption').first();
         if(styleOption != undefined)
         {
             changeStyle(styleOption);
+            selectionMade();
             clearInterval(loadDefaults);
         }
     }, 100);
@@ -538,18 +586,9 @@ var attachHandlers = function () {
           clearInterval(setUpElements);
       }
       );
-        $('.colorOption').mouseover(
+        $(NAME_OF_CURRENT_SELECTION).on("mouseover", ".colorOption", 
             function () {
                 previewChangeColor($(this));
-                /*
-                var optionType = $(this).parent().parent().attr('id');
-                if (optionType == "colorOptionBox1") {
-                    previewChangeInnerColor($(this).children("img").css("background-image"));
-                }
-                else if (optionType == "colorOptionBox2") {
-                    previewChangeOuterColor($(this).children("img").css("background-color"));
-                }
-                */
 
             }
         );
@@ -575,14 +614,43 @@ var attachHandlers = function () {
                 resetColor();
             }
         );
-        $('.styleOption').click(
-            function () {
+        $('.styleOption').on("click",
+            function (evt) {
+                console.log("click! style");
+                selectionMade();
                 changeStyle($(this));
             }
         );
-        $('.typeOption').click(function(){
-            changeType($(this));
-        });
+
+        $(NAME_OF_CURRENT_SELECTION).on("click", ".styleOption",
+            function (evt) {
+                $(this).css("color", "teal");
+                console.log("click! type");
+                selectionMade();
+                changeStyle($(this));
+            });
+
+        $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".styleOption",
+           function (evt) {
+               console.log("click! type");
+               selectionMade();
+               //changeType($(this));
+           });
+
+        $(NAME_OF_CURRENT_SELECTION).on("click", ".typeOption",
+            function (evt) {
+                console.log("click! type");
+                $(this).css("color", "teal");
+                selectionMade();
+            //changeType($(this));
+            });
+
+        $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".typeOption",
+            function (evt) {
+                console.log("click! type");
+                selectionMade();
+                //changeType($(this));
+            });
     }, 100);
 }
 
@@ -620,7 +688,6 @@ var finishChangingStyle = function()
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
     loadAllColors(numColors);
-    attachHandlers();
 }
 
 var addNewColorOptionRow = function(colorNum)

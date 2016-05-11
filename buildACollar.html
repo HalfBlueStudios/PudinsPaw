@@ -22,10 +22,17 @@
 
             <div class="previewCanvas">
                 <canvas style="position:absolute; visibility:hidden" id="backgroundCanvas"></canvas>
-                <canvas id="displayedCanvas" ></canvas>
+                <canvas id="displayedCanvas"></canvas>
                 <canvas style="position:absolute; visibility:hidden" id="coloringCanvas"></canvas>
             </div>
+            <div class="allSelections">
+                <!--Class to hold the current selection for user to choose-->
+                <div class="currentSelectionChoice"></div>
 
+                <!--Class to hold previous selections on options made by user-->
+                <div class="previousSelections"></div>
+
+            </div>
             <div class="allOptions" style="position:absolute; visibility:hidden">
 
                 <div class="wordOptionBox">
@@ -33,22 +40,20 @@
                     <div class="typeOptions" id="typeSelectOptions"></div>
                 </div>
 
-                <br/>
+                <br />
 
                 <div class="wordOptionBox">
                     <h1>Select the product style:</h1>
-                    <div class="stylesOptions" id="styleSelectOptions"></div> 
+                    <div class="stylesOptions" id="styleSelectOptions"></div>
                 </div>
 
-                <br/>
-                <div class="colorOptions">
-                    
-                </div>
+                <br />
+                <div class="colorOptions"></div>
+            </div>
         </div>
         <div class="footer">
             <footer class="pageFooter"></footer>
         </div>
-    </div>
     </div>
 
 </body>

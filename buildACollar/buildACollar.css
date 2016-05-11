@@ -3,12 +3,24 @@
     background-color:transparent;
 }
 
-.allOptions
+.allSelections
 {
-    float:right;
     margin-left:500px;
     margin-top:-155px;
-} 
+    height:700px;
+    overflow:auto;
+}
+
+.currentSelectionChoice
+{
+    display:block;
+}
+
+.previousSelections
+{
+    display:block;
+}
+ 
 
 .pictureOptionBox 
 {
@@ -43,37 +55,32 @@
 .pictureOptionBox h1
 {
     border:none;
-    //border-bottom:solid;
-    //border-color:orange;
 }
 
+/*put a bandiade here for now with margin-right, will have to be proporly fixed*/
 .wordOptionBox 
 {
+    float:left;
     margin-left:0px;
-        display:inline-flex;
+    margin-right:500px;
+    display:inline-flex;
 }
 
 .wordOptionBox h1
 {
     border:none;
     margin-left:20px;
-    //border-bottom:solid;
-    //border-color:orange;
 }
 
 .styleOption h1
 {
     border:none;
-    border-bottom:solid;
-    border-color:red;
     display:inline-block;
 }
 
 .typeOptions h1
 {
     border:none;
-    border-bottom:solid;
-    border-color:teal;
     display:inline-block;
 }
 
