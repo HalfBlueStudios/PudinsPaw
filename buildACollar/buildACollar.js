@@ -73,6 +73,8 @@ var setUpCanvas = function()
 
     canvasHeight = parseInt($('.previewCanvas').css('height'));
     canvasPosition = parseInt($('.previewCanvas').position().top);
+
+    
 }
 
 var resetCanvas = function(newUrl, callbackFunc)
@@ -81,6 +83,7 @@ var resetCanvas = function(newUrl, callbackFunc)
     baseImage = new Image();
     baseImage.src = newUrl;
     baseImage.onload = function () {
+        displayedCtx.clearRect(0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         ctx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         displayedCtx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
@@ -501,7 +504,7 @@ var main = function ()
 var loadDefaultOptions = function()
 {
     var loadDefaults = setInterval(function () {
-        var styleOption = $('.styleOption');
+        var styleOption = $('.styleOption').first();
         if(styleOption != undefined)
         {
             changeStyle(styleOption);
@@ -530,7 +533,6 @@ var changeColor = function(newColorObj)
 
 var attachHandlers = function () {
     var setUpElements = setInterval(function () {
-        console.log("setting handles...");
         $('.colorOption').find('img').each(
       function () {
           clearInterval(setUpElements);
@@ -581,26 +583,8 @@ var attachHandlers = function () {
         $('.typeOption').click(function(){
             changeType($(this));
         });
-        /*
-        $(window).scroll(function () {
-            var positionToCompare = (canvasHeight /2 + canvasPosition);
-            var windowScroll = parseInt($(window).scrollTop());
-            if (windowScroll > positionToCompare)//(canvasHeight + canvasPosition));
-            {
-                console.log("found true!");
-                $('.previewCanvas').css("position", "absolute");
-                $('.allOptions').css("margin-top", canvasHeight);
-                $(".previewCanvas").stop().animate({ "marginTop": ($(window).scrollTop() - positionToCompare) + "px"}, "fast");
-            }
-            else
-            {
-                $('.previewCanvas').css("top", "canvasPosition");
-            }
-        });
-        */
     }, 100);
 }
-
 
 var changeStyle = function(newStyleObject)
 {
@@ -720,8 +704,6 @@ var loadAllColors = function(numColors)
 
 var setUpOptions = function()
 {
-    //$('#colorOptions1').load("buildACollar/options.html #regularColors");
-    //$('#colorOptions2').load("buildACollar/options.html #regularColors");
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
     $('#typeSelectOptions').load("buildACollar/options.html #types");
     $('#sizeSelectOptions').load("buildACollar/options.html #sizes");

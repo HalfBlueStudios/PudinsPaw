@@ -14,7 +14,7 @@
     <div class="allWrapper">
         <div class="header">
             <div class="navigationBar"></div>
-            <div class="bannerPicture" style="background-image:url();">
+            <div class="bannerPicture" style="background-image:url();"> <!--Change height to fix problem with background-->
             </div>
         </div>
 
@@ -26,7 +26,7 @@
                 <canvas style="position:absolute; visibility:hidden" id="coloringCanvas"></canvas>
             </div>
 
-            <div class="allOptions">
+            <div class="allOptions" style="position:absolute; visibility:hidden">
 
                 <div class="wordOptionBox">
                     <h1>Select the product type:</h1>
@@ -42,34 +42,13 @@
 
                 <br/>
                 <div class="colorOptions">
-                    <div class="pictureOptionBox">
-                        <h1>Choose the 1st color:</h1>
-                        <div class="pictureOptions" id="colorOptions1"></div>
-
-                    </div>
-
-                    <br />
-
-                    <div class="pictureOptionBox">
-                        <h1>Choose the 2nd color:</h1>
-                        <div class="pictureOptions" id="colorOptions2"></div>
-                    </div>
+                    
                 </div>
-
-
-                <br />
-
-                <div class="wordOptionBox">
-                    <h1>Select the product size:</h1>
-                    <div class="sizeOptions" id="sizeSelectOptions"></div>
-                </div>
-
-            </div>
         </div>
-
         <div class="footer">
             <footer class="pageFooter"></footer>
         </div>
+    </div>
     </div>
 
 </body>
