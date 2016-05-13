@@ -1,4 +1,9 @@
-﻿.content
+﻿.div
+{
+    width: 300%;
+}
+
+.content
 {
     background-color:transparent;
 }

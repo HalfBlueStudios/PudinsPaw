@@ -765,11 +765,31 @@ var loadAllColors = function(numColors, finalCallBackFunc)
         console.log("num colors is " + numColors + " current colors is " + currentNumberOfColors);
         if (numColors - 1 < currentNumberOfColors)
         {
+            var numColorsToChange = currentNumberOfColors - (numColors - 1);
+            var colorsRemoved = 0;
+            var objectsToRemove = [];
             for(i = currentNumberOfColors; i > numColors - 1; i--)
             {
                 var searchString = '#colorOptionBox' + i;
                 var animationObj = $('.colorOptions').find(searchString).parent();
-                animationObj.animate({ marginLeft: + 3000 }, 1000);
+                animationObj.css("overflow", "hidden");
+                animationObj.css("position", "relative");
+                animationObj.css("position", "absoltute");
+                animationObj.animate({ left: "3000px" }, 1000, function () {
+                    colorsRemoved++;
+                    objectsToRemove.push($(this));
+                    console.log("colors removed is " + colorsRemoved + " colorsToChage is " + numColorsToChange);
+                    if (colorsRemoved == numColorsToChange)
+                    {
+                        $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "=" + (numColorsToChange * $(this).css("height")) }, 1000, function ()
+                        {
+                            for (k = 0; k < objectsToRemove.length; k++)
+                            {
+                                objectsToRemove[k].remove(); 
+                            }
+                        });
+                    }
+                });
             }
         }
         else
