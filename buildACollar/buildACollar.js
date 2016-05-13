@@ -6,6 +6,8 @@ const NAME_OF_PREVIOUS_SELECTIONS = ".previousSelections";
 
 var currentOptionNumber = 0;
 
+var currentNumberOfColors = 0;
+
 var ctx;
 var canvas;
 var baseImage;
@@ -83,7 +85,7 @@ var setUpCanvas = function()
     
 }
 
-var resetCanvas = function(newUrl, callbackFunc)
+var resetCanvas = function(newUrl, callbackFunc, finalCallBackFunc)
 {
     imageLoaded = false;
     baseImage = new Image();
@@ -93,7 +95,7 @@ var resetCanvas = function(newUrl, callbackFunc)
         ctx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         displayedCtx.drawImage(baseImage, 0, 0, DRAW_IMAGE_WIDTH, DRAW_IMAGE_HEIGHT);
         currentImageData = displayedCtx.getImageData(0, 0, displayedCanvas.width, displayedCanvas.height);
-        callbackFunc();
+        callbackFunc(finalCallBackFunc);
     }
 }
 
@@ -230,7 +232,7 @@ var resetStyle = function()
 {
     pixelsToRecolorList = [];
     mostImportantValuesList = [];
-    $("." + NAME_OF_COLOR_HOLDER).html("");
+    //$("." + NAME_OF_COLOR_HOLDER).html("");
 
 
 }
@@ -487,7 +489,6 @@ var selectionMade = function()
         });
     }
     currentOptionNumber++;
-    //attachHandlers();
 }
 
 /*-----------------------finish Selection-----------------------------------
@@ -512,7 +513,6 @@ var finishSelection = function(nextOption)
         console.log("class: " + newSelection.attr('class'));
     }
     newSelection.animate({opacity: + 1000},8000)
-    //nextOption.fadeIn(4000);
 }
 
 
@@ -586,12 +586,32 @@ var attachHandlers = function () {
           clearInterval(setUpElements);
       }
       );
+        /*----------------color select handlers------------------*/
         $(NAME_OF_CURRENT_SELECTION).on("mouseover", ".colorOption", 
             function () {
                 previewChangeColor($(this));
 
             }
         );
+
+        $(NAME_OF_CURRENT_SELECTION).on("mouseleave", ".colorOption",
+        function () {
+            resetColor();
+        }
+        );
+
+        $(NAME_OF_PREVIOUS_SELECTIONS).on("mouseover", ".colorOption",
+        function () {
+            previewChangeColor($(this));
+        }
+        );
+
+        $(NAME_OF_PREVIOUS_SELECTIONS).on("mouseleave", ".colorOption",
+        function () {
+            resetColor();
+        }
+        );
+
 
         $('.colorOption').click(
             function () {
@@ -609,37 +629,29 @@ var attachHandlers = function () {
             }
         );
 
-        $('.colorOption').mouseleave(
-            function () {
-                resetColor();
-            }
-        );
+        /*--------------------style option handlers-----------------*/
         $('.styleOption').on("click",
             function (evt) {
+                changeStyle($(this));
                 console.log("click! style");
                 selectionMade();
-                changeStyle($(this));
             }
         );
 
         $(NAME_OF_CURRENT_SELECTION).on("click", ".styleOption",
             function (evt) {
+                changeStyle($(this), selectionMade);
                 $(this).css("color", "teal");
-                console.log("click! type");
-                selectionMade();
-                changeStyle($(this));
             });
 
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".styleOption",
            function (evt) {
-               console.log("click! type");
-               selectionMade();
-               //changeType($(this));
+               changeStyle($(this), selectionMade);
            });
 
+        /*-----------------type option handlers--------------------*/
         $(NAME_OF_CURRENT_SELECTION).on("click", ".typeOption",
             function (evt) {
-                console.log("click! type");
                 $(this).css("color", "teal");
                 selectionMade();
             //changeType($(this));
@@ -648,13 +660,12 @@ var attachHandlers = function () {
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".typeOption",
             function (evt) {
                 console.log("click! type");
-                selectionMade();
                 //changeType($(this));
             });
     }, 100);
 }
 
-var changeStyle = function(newStyleObject)
+var changeStyle = function(newStyleObject, finalCallBackFunc)
 {
     if (newStyleObject == chosenStyleObject)
     {
@@ -662,11 +673,11 @@ var changeStyle = function(newStyleObject)
     }
     var picturePath = getBackgroundImageFromUrl(newStyleObject.css("background-image"));
     chosenStyleObject = newStyleObject;
-    resetCanvas(picturePath, finishChangingStyle);
+    resetCanvas(picturePath, finishChangingStyle, finalCallBackFunc);
 }
 
 //second half to change style function - gets called once loading of picture completes
-var finishChangingStyle = function()
+var finishChangingStyle = function(finalCallBackFunc)
 {
     resetStyle();
     var numColors = 1;
@@ -687,7 +698,7 @@ var finishChangingStyle = function()
         numColors++;
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
-    loadAllColors(numColors);
+    loadAllColors(numColors, finalCallBackFunc);
 }
 
 var addNewColorOptionRow = function(colorNum)
@@ -748,25 +759,36 @@ var resetColor = function()
 }
 
 //loads color options into each option box
-var loadAllColors = function(numColors)
+var loadAllColors = function(numColors, finalCallBackFunc)
 {
-    var loadColors = setInterval(function ()
-    {
         var numLoaded = 0;
-        for (i = 1; i < numColors; i++)
+        console.log("num colors is " + numColors + " current colors is " + currentNumberOfColors);
+        if (numColors - 1 < currentNumberOfColors)
         {
-            var searchString = '#colorOptionBox' + i;
-            $('.colorOptions').find(searchString).each(function () {
-                numLoaded++;
-                $(this).load("buildACollar/options.html #regularColors");
+            for(i = currentNumberOfColors; i > numColors - 1; i--)
+            {
+                var searchString = '#colorOptionBox' + i;
+                var animationObj = $('.colorOptions').find(searchString).parent();
+                animationObj.animate({ marginLeft: + 3000 }, 1000);
             }
-            );
         }
-        if(numLoaded == numColors - 1)
+        else
         {
-            clearInterval(loadColors);
+            for (i = 1; i < numColors; i++) {
+                var searchString = '#colorOptionBox' + i;
+                $('.colorOptions').find(searchString).each(function () {
+
+                    $(this).load("buildACollar/options.html #regularColors", function () {
+                        numLoaded++;
+                        if (numLoaded == numColors - 1) {
+                            currentNumberOfColors = numLoaded;
+                            finalCallBackFunc();
+                        }
+                    });
+                }
+                );
+            }
         }
-    });
 }
 
 var setUpOptions = function()

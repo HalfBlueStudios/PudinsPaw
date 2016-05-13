@@ -8,7 +8,8 @@
     margin-left:500px;
     margin-top:-155px;
     height:700px;
-    overflow:auto;
+    overflow-x: hidden;
+    overflow-y:auto;
 }
 
 .currentSelectionChoice
