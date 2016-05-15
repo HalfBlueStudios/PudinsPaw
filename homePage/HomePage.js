@@ -31,7 +31,7 @@ var main = function()
         }
         );
     $(".slideBox").each(function () {
-       $(this).animate({ marginLeft: + "-1000" }, 5000);
+       //$(this).animate({ marginLeft: + "-1000" }, 5000);
     });
 }
 

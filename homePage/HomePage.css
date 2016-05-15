@@ -43,30 +43,30 @@ body {
 
 .bannerSlideShow img
 {
-    width: 64vh;
+    width: 110%;
     height: 70vh;
 }
 
 .bannerSlideShow .slideBox
 {
-    width: 65vh;
+    width: 30%;
     position:absolute;
 }
 
 .bannerSlideShow #leftBox
 {
-    left: 0vh;
+    left: 0;
     opacity:.4;
 }
 
 .bannerSlideShow #middleBox
 {
-    left: 65vh;
+    left: 33.5%;
 }
 
 .bannerSlideShow #rightBox
 {
-    left: 130vh;
+    left: 67%;
     opacity:.4;
 }
 
