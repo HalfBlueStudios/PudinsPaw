@@ -478,17 +478,24 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
     Function to change the current selection into previous selection list
     then animates previous selection list down to accomidate new selection
     finally loads new option into current selectiom
+
+    THIS CLASS HAS DANGER OF STACK OVERFLOW DUE TO RECURSIVE NATURE
 */
 var selectionMade = function()
 {
-    var nextOption = $(NAME_OF_ALL_OPTIONS).children().eq(currentOptionNumber);
-    if (nextOption.attr('class') != undefined)
+    var setOfOptions = $(NAME_OF_ALL_OPTIONS).children();
+    for (i = currentOptionNumber; i < setOfOptions.length; i++)
     {
-        $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "+=" + nextOption.css("height") }, 1000, function () {
-            finishSelection(nextOption);
-        });
+        var nextOption = setOfOptions.eq(i);
+        if (nextOption.attr('class') != undefined) {
+            console.log("new selection name: " + nextOption.attr('class') + " with height of " + nextOption.css("height"));
+            $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "+=" + nextOption.css("height") }, 1000, function () {
+                finishSelection(nextOption);
+            });
+            currentOptionNumber = i + 1;
+            return;
+        }
     }
-    currentOptionNumber++;
 }
 
 /*-----------------------finish Selection-----------------------------------
@@ -544,7 +551,8 @@ var main = function ()
     setUpCanvas();
     setUpOptions();
     attachHandlers();
-    loadDefaultOptions();
+    selectionMade(); //displays first set of options
+    //loadDefaultOptions();
 }
 
 var loadDefaultOptions = function()
@@ -554,7 +562,6 @@ var loadDefaultOptions = function()
         var styleOption = $('.styleOption').first();
         if(styleOption != undefined)
         {
-            changeStyle(styleOption);
             selectionMade();
             clearInterval(loadDefaults);
         }
@@ -580,12 +587,6 @@ var changeColor = function(newColorObj)
 
 
 var attachHandlers = function () {
-    var setUpElements = setInterval(function () {
-        $('.colorOption').find('img').each(
-      function () {
-          clearInterval(setUpElements);
-      }
-      );
         /*----------------color select handlers------------------*/
         $(NAME_OF_CURRENT_SELECTION).on("mouseover", ".colorOption", 
             function () {
@@ -616,37 +617,20 @@ var attachHandlers = function () {
         $('.colorOption').click(
             function () {
                 changeColor($(this));
-                /*
-                var optionType = $(this).parent().parent().attr('id');
-                if (optionType == "colorOptionBox1") {
-                    changeInnerColor($(this));
-                }
-                else if (optionType == "colorOptionBox2") {
-                    changeOuterColor($(this));
-                }
-                */
-
             }
         );
 
         /*--------------------style option handlers-----------------*/
-        $('.styleOption').on("click",
-            function (evt) {
-                changeStyle($(this));
-                console.log("click! style");
-                selectionMade();
-            }
-        );
 
-        $(NAME_OF_CURRENT_SELECTION).on("click", ".styleOption",
-            function (evt) {
-                changeStyle($(this), selectionMade);
-                $(this).css("color", "teal");
-            });
+        var currentStyleFunc = function (evt) {
+            changeStyle($(this), selectionMade);
+            $(this).css("color", "teal");
+        };
+        $(NAME_OF_CURRENT_SELECTION).one("click", ".styleOption", currentStyleFunc);
 
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".styleOption",
            function (evt) {
-               changeStyle($(this), selectionMade);
+               changeStyle($(this), null);
            });
 
         /*-----------------type option handlers--------------------*/
@@ -662,11 +646,11 @@ var attachHandlers = function () {
                 console.log("click! type");
                 //changeType($(this));
             });
-    }, 100);
 }
 
 var changeStyle = function(newStyleObject, finalCallBackFunc)
 {
+    console.log("changing style!");
     if (newStyleObject == chosenStyleObject)
     {
         return;
@@ -680,9 +664,13 @@ var changeStyle = function(newStyleObject, finalCallBackFunc)
 var finishChangingStyle = function(finalCallBackFunc)
 {
     resetStyle();
-    var numColors = 1;
+    var numColors = 0;
     chosenStyleObject.find('color').each(function () {
-        addNewColorOptionRow(numColors);
+        numColors++;
+        if (numColors > currentNumberOfColors)
+        {
+            addNewColorOptionRow(numColors);
+        }
         var newArray = [DRAW_IMAGE_WIDTH * DRAW_IMAGE_HEIGHT];
         for (var i = 0; i < newArray.length; i++)
         {
@@ -695,7 +683,6 @@ var finishChangingStyle = function(finalCallBackFunc)
         mostImportantValuesList[(numColors * 2) - 1] = newColors[mostImpVal];
         mostImportantValuesList[numColors * 2] = mostImpVal;
         parsePicture(parseColor($(this).css("background-color")), numColors, $(this).text()); //still need to insert right percent margin
-        numColors++;
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
     loadAllColors(numColors, finalCallBackFunc);
@@ -703,6 +690,7 @@ var finishChangingStyle = function(finalCallBackFunc)
 
 var addNewColorOptionRow = function(colorNum)
 {
+    console.log("adding new color " + colorNum);
     $("." + NAME_OF_COLOR_HOLDER).append("<div class=\"pictureOptionBox\">" +
                                          "<h1>Select the " + colorNum + getNumberEnding(colorNum) + " color</h1>" +
                                          "<div class=\"pictureOptions\" id=\"colorOptionBox" + colorNum + "\"></div>" + 
@@ -761,54 +749,69 @@ var resetColor = function()
 //loads color options into each option box
 var loadAllColors = function(numColors, finalCallBackFunc)
 {
-        var numLoaded = 0;
-        console.log("num colors is " + numColors + " current colors is " + currentNumberOfColors);
-        if (numColors - 1 < currentNumberOfColors)
+        if (numColors < currentNumberOfColors)
         {
-            var numColorsToChange = currentNumberOfColors - (numColors - 1);
+            var numColorsToChange = currentNumberOfColors - (numColors);
             var colorsRemoved = 0;
             var objectsToRemove = [];
-            for(i = currentNumberOfColors; i > numColors - 1; i--)
+            for(i = currentNumberOfColors; i > numColors; i--)
             {
                 var searchString = '#colorOptionBox' + i;
                 var animationObj = $('.colorOptions').find(searchString).parent();
                 animationObj.css("overflow", "hidden");
                 animationObj.css("position", "relative");
                 animationObj.css("position", "absoltute");
-                animationObj.animate({ left: "3000px" }, 1000, function () {
+                animationObj.first().animate({ left: "3000px" }, 1000, function () {
                     colorsRemoved++;
-                    objectsToRemove.push($(this));
-                    console.log("colors removed is " + colorsRemoved + " colorsToChage is " + numColorsToChange);
+                    objectsToRemove[objectsToRemove.length] = $(this);
                     if (colorsRemoved == numColorsToChange)
                     {
-                        $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "=" + (numColorsToChange * $(this).css("height")) }, 1000, function ()
+                        var heightChange = (numColorsToChange * parseInt($(this).css("height")) + "px");
+                        $(NAME_OF_PREVIOUS_SELECTIONS).css("margin-top", heightChange);
+                        for (k = 0; k < objectsToRemove.length; k++)
                         {
-                            for (k = 0; k < objectsToRemove.length; k++)
-                            {
-                                objectsToRemove[k].remove(); 
-                            }
-                        });
+                            objectsToRemove[k].remove();
+                        }
+                       $(NAME_OF_PREVIOUS_SELECTIONS).animate({marginTop: "0px"}, 1000);
                     }
                 });
             }
+            console.log("num colors before is " + numColors);
+            currentNumberOfColors = numColors;
         }
-        else
+        else if(numColors > currentNumberOfColors)
         {
-            for (i = 1; i < numColors; i++) {
+            var numLoaded = 0;
+            for (i = 1; i <= numColors; i++) {
                 var searchString = '#colorOptionBox' + i;
                 $('.colorOptions').find(searchString).each(function () {
 
-                    $(this).load("buildACollar/options.html #regularColors", function () {
+                    $(this).load("buildACollar/options.html #regularColors", function()
+                    {
                         numLoaded++;
-                        if (numLoaded == numColors - 1) {
+                        console.log("numloaded is " + numLoaded + " and num colors is " + numColors);
+                        if (numLoaded == numColors) {
+                            console.log("num loaded before is " + numLoaded);
                             currentNumberOfColors = numLoaded;
-                            finalCallBackFunc();
+                            if (finalCallBackFunc != null) {
+                                finalCallBackFunc();
+                            }
                         }
+                        return;
                     });
                 }
                 );
             }
         }
+}
+
+/*---------------resize color options-------------------
+    Function to move previous selections down to accomidate more color options
+    WILL HAVE TO BE CHANGED ONCE ALL COLORS ARE IN THE PREVIOUS COLOR SELECTION PART
+*/
+var resizeColorOptions = function()
+{
+
 }
 
 var setUpOptions = function()
@@ -818,4 +821,6 @@ var setUpOptions = function()
     $('#sizeSelectOptions').load("buildACollar/options.html #sizes");
 }
 
-$(document).ready(main);
+$(document).ready(function ($) {
+    main();
+});
