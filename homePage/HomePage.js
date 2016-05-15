@@ -30,6 +30,9 @@ var main = function()
             //$(this).children(overlayName).css("opacity", 0);
         }
         );
+    $(".slideBox").each(function () {
+       $(this).animate({ marginLeft: + "-1000" }, 5000);
+    });
 }
 
 var DoneAnimation = function()

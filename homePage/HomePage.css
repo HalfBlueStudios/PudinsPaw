@@ -6,6 +6,7 @@ body {
     margin: 0;
     //background-image:url(../siteWide/images/bg-image.png);
     background-color:rgb(204, 228, 212);
+    overflow-x:hidden;
 }   
 
 .header
@@ -13,6 +14,7 @@ body {
        width:100%;
 }
 
+/*
 .allWrapper .header .bannerPicture
 {
    display:block;
@@ -24,13 +26,55 @@ body {
    border:0;
    margin:0;
    padding: 0;
-
-   /*if i want to go back to full screen, remove these two*/
    //width:70rem;
   //margin-left:25rem;
 }
+    
+*/
 
+.bannerSlideShow
+{
+    display:inline-block;
+    overflow:hidden;
+    position:center;
+    height:70vh;
+    width:100%;
+}
 
+.bannerSlideShow img
+{
+    width: 64vh;
+    height: 70vh;
+}
+
+.bannerSlideShow .slideBox
+{
+    width: 65vh;
+    position:absolute;
+}
+
+.bannerSlideShow #leftBox
+{
+    left: 0vh;
+    opacity:.4;
+}
+
+.bannerSlideShow #middleBox
+{
+    left: 65vh;
+}
+
+.bannerSlideShow #rightBox
+{
+    left: 130vh;
+    opacity:.4;
+}
+
+.bannerSlideShow #offScreenRightBox
+{
+    left: 195vh;
+    opacity:.4;
+}
 
 
 .initalSelections
