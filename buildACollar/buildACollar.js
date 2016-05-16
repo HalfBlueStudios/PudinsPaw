@@ -523,10 +523,6 @@ var finishSelection = function(nextOption)
 }
 
 
-
-
-//rgb(3,2,1
-
 var parseColor = function (colorToParse)
 {
     var RstartIndex = colorToParse.indexOf('(') + 1;
@@ -630,7 +626,7 @@ var attachHandlers = function () {
 
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".styleOption",
            function (evt) {
-               changeStyle($(this), null);
+               changeStyle($(this), resizeColorOptions);
            });
 
         /*-----------------type option handlers--------------------*/
@@ -761,7 +757,9 @@ var loadAllColors = function(numColors, finalCallBackFunc)
                 animationObj.css("overflow", "hidden");
                 animationObj.css("position", "relative");
                 animationObj.css("position", "absoltute");
-                animationObj.first().animate({ left: "3000px" }, 1000, function () {
+                console.log("before animation!");
+                animationObj.first().stop().animate({ left: "3000px" }, 1000, function () {
+                    console.log("done with animation!");
                     colorsRemoved++;
                     objectsToRemove[objectsToRemove.length] = $(this);
                     if (colorsRemoved == numColorsToChange)
@@ -785,17 +783,16 @@ var loadAllColors = function(numColors, finalCallBackFunc)
             for (i = 1; i <= numColors; i++) {
                 var searchString = '#colorOptionBox' + i;
                 $('.colorOptions').find(searchString).each(function () {
-
                     $(this).load("buildACollar/options.html #regularColors", function()
                     {
                         numLoaded++;
                         console.log("numloaded is " + numLoaded + " and num colors is " + numColors);
                         if (numLoaded == numColors) {
                             console.log("num loaded before is " + numLoaded);
-                            currentNumberOfColors = numLoaded;
                             if (finalCallBackFunc != null) {
                                 finalCallBackFunc();
                             }
+                            currentNumberOfColors = numLoaded;
                         }
                         return;
                     });
@@ -811,7 +808,31 @@ var loadAllColors = function(numColors, finalCallBackFunc)
 */
 var resizeColorOptions = function()
 {
-
+    var newNumColors = $(NAME_OF_CURRENT_SELECTION).find(".pictureOptionBox");
+    var startNum = currentNumberOfColors;
+    var ammountToMove = 0;
+    var boxesHidden = [];
+    for (i = startNum; i < newNumColors.length; i++)
+    {
+        var newColorBox = newNumColors.eq(i);
+        ammountToMove += parseInt(newColorBox.css("height"));
+        ammountToMove += parseInt(newColorBox.css("margin-bottom"));
+        newColorBox.css("opacity", "0");
+        newColorBox.css("position", "absolute");
+        console.log("ammount to move is " + ammountToMove);
+        boxesHidden[boxesHidden.length] = newColorBox;
+    }
+    console.log("AMMOUNT TO MOVE IS " + ammountToMove);
+    $(NAME_OF_PREVIOUS_SELECTIONS).animate({ marginTop: "+=" + ammountToMove }, 1000, function ()
+    {
+        for(i = 0; i < boxesHidden.length; i++)
+        {
+            boxesHidden[i].css("position", "relative");
+            console.log("setting " + i + " to relative");
+            boxesHidden[i].animate({ opacity: +1000 }, 8000)
+        }
+        $(NAME_OF_PREVIOUS_SELECTIONS).css("margin-top", "-=" + ammountToMove + "px");
+    });
 }
 
 var setUpOptions = function()

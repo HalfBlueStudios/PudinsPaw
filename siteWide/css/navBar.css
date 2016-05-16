@@ -8,15 +8,14 @@
 
 .navigationBar
 {
-    display:inline;
+    display:block;
     z-index:1;
-    position:absolute;
-    font-size:.6rem;    
+    font-size:.6rem;
+    opacity:.8;    
 }
 
 .navigationBar .navBox
 {
-    position:absolute;
     display:inline-block;
     overflow:hidden;
     background-color: rgba(0, 0, 0, .6);
@@ -81,7 +80,6 @@
 .navigationBar .navBox .selectedWrapper .selectedBar
 {
    z-index:1;
-   position: absolute;
    background-color:teal;
    width: 5rem;
    height: 5px;
