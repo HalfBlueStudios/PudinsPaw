@@ -49,19 +49,23 @@
 
                 <br />
                 <div class="colorOptions"></div>
+                <div class="sizeOptions">
+                    <div class="pictureOptionBox">
+                        <h1>Select the product size:</h1>
+                        <div class="sizes" id="sizeSelectOptions"></div>
+                    </div>
+                    <div class="measuringPopUp">
+                                                <script>
+                              $(function() {
+                                $( "#dialog" ).dialog();
+                              });
+                                                </script>
 
-                <div class="measuringPopUp">
-                                            <script>
-                          $(function() {
-                            $( "#dialog" ).dialog();
-                          });
-                                            </script>
-
-                        <div id="dialog" title="Basic dialog">
-                            <p style="background-color:darkgray">This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-                            <img src="Test1 copy.jpg" />
-                        </div>
-</div>
+                            <div id="dialog" title="Basic dialog">
+                                <img src="Test1 copy.jpg" style="height:100%; width:300%;" />
+                            </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="footer">

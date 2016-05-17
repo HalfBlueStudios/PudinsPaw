@@ -583,7 +583,6 @@ var changeColor = function(newColorObj)
     }
     chosenColors[colorNum].children("img").css("border-style", "solid");
     loadNewColor(newPicUrl, colorNum, 0.2, true);
-    checkIfAllColorsSelected();
 }
 
 var checkIfAllColorsSelected = function()
@@ -633,8 +632,14 @@ var attachHandlers = function () {
         $(NAME_OF_CURRENT_SELECTION).on("click",".colorOption",
             function () {
                 changeColor($(this));
+                checkIfAllColorsSelected();
             }
         );
+        $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".colorOption",
+                function () {
+                    changeColor($(this));
+                }
+            );
 
         /*--------------------style option handlers-----------------*/
 
@@ -860,7 +865,7 @@ var setUpOptions = function()
 {
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
     $('#typeSelectOptions').load("buildACollar/options.html #types");
-    $('#sizeSelectOptions').load("buildACollar/options.html #sizes");
+    $('#sizeSelectOptions').load("buildACollar/options.html #allSizes");
 }
 
 var setUpPopUp = function()
@@ -890,7 +895,8 @@ var setUpPopUp = function()
     });
 
     $(".ui-dialog-titlebar").css("display", "block");
-    $(".ui-dialog-title").css("font-size", "5px");
+    $(".ui-dialog-title").css("font-size", "35px");
+    $(".ui-dialog-title").css("background-color", "red");
     $(".ui-widget-header").css("display", "block");
     $(".ui-widget-content").css("background-color", "darkgrey");
     $(".ui-widget-content").css("font-size", "12px");

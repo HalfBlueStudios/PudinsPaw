@@ -47,6 +47,12 @@
             z-index:1;
 }
 
+.sizeOption 
+{
+    position:relative;
+            z-index:1;
+}
+
 .typeOption
 {
     position:relative;
@@ -110,6 +116,13 @@
 }
 
 .colorOption img
+{
+    cursor: pointer;
+    width:70px;
+    height:70px;
+}
+
+.sizeOption img
 {
     cursor: pointer;
     width:70px;
