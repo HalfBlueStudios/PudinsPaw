@@ -22,11 +22,6 @@ const IMAGE_WIDTH = 700;
 const IMAGE_HEIGHT = 600;
 
 var currentImageData;
-var snapOuter = [81,155,80];
-var snapInner = [47, 46, 77];
-
-var currentInnerRGB;
-var currentOuterRGB;
 
 var DRAW_IMAGE_WIDTH = 200;
 var DRAW_IMAGE_HEIGHT = 150;
@@ -34,8 +29,7 @@ var DRAW_IMAGE_HEIGHT = 150;
 var canvasHeight;
 var canvasPosition;
 
-var chosenInnerColorObject;
-var chosenOuterColorObject;
+var chosenColors = [];
 
 var chosenStyleObject;
 
@@ -126,7 +120,6 @@ var adjectPixelFoundCheck = function(pixelNum, foundPixelList)
 {
     var listToCheck = getAdjacentPixelList(pixelNum);
     var retVal = 1;
-    //console.log("list length: " + listToCheck.length);
     for (var i = 0; i < listToCheck.length; i++)
     {
         if (foundPixelList[listToCheck[i]] == true)
@@ -232,9 +225,6 @@ var resetStyle = function()
 {
     pixelsToRecolorList = [];
     mostImportantValuesList = [];
-    //$("." + NAME_OF_COLOR_HOLDER).html("");
-
-
 }
 
 var parsePicture = function(colorToMatch, colorNum, percentMargin)
@@ -546,6 +536,7 @@ var main = function ()
 {
     setUpCanvas();
     setUpOptions();
+    setUpPopUp();
     attachHandlers();
     selectionMade(); //displays first set of options
     //loadDefaultOptions();
@@ -577,8 +568,37 @@ var changeColor = function(newColorObj)
     var newPicUrl = getBackgroundImageFromUrl(newColorObj.children("img").css("background-image"));
     var optionType = newColorObj.parent().parent().attr('id');
     var colorNum = optionType[optionType.length - 1]; //gets what number color the color selected belongs to
-    newColorObj.children("img").css("border-style","solid");
+    var colorName = newColorObj.children("h1").html();
+    if (chosenColors[colorNum] == this) //color already selected
+    {
+        return;
+    }
+    else
+    {
+        if (chosenColors[colorNum] != undefined)
+        {
+            chosenColors[colorNum].children("img").css("border-style", "none"); //gets rid of visual selector on old selection
+        }
+        chosenColors[colorNum] = newColorObj;
+    }
+    chosenColors[colorNum].children("img").css("border-style", "solid");
     loadNewColor(newPicUrl, colorNum, 0.2, true);
+    checkIfAllColorsSelected();
+}
+
+var checkIfAllColorsSelected = function()
+{
+    var totalColors = chosenColors[0];
+    for(i = 1; i <= totalColors; i++)
+    {
+        if(chosenColors[i] == undefined)
+        {
+            console.log("not all colors selected!");
+            return; //not all colors chosen yet
+        }
+    }
+    console.log("all colors selected!");
+    selectionMade();
 }
 
 
@@ -610,7 +630,7 @@ var attachHandlers = function () {
         );
 
 
-        $('.colorOption').click(
+        $(NAME_OF_CURRENT_SELECTION).on("click",".colorOption",
             function () {
                 changeColor($(this));
             }
@@ -681,6 +701,7 @@ var finishChangingStyle = function(finalCallBackFunc)
         parsePicture(parseColor($(this).css("background-color")), numColors, $(this).text()); //still need to insert right percent margin
         //TODO: SET NUMBER OF COLORS BASED ON NUM COLORS
     })
+    chosenColors[0] = numColors;
     loadAllColors(numColors, finalCallBackFunc);
 }
 
@@ -840,6 +861,41 @@ var setUpOptions = function()
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
     $('#typeSelectOptions').load("buildACollar/options.html #types");
     $('#sizeSelectOptions').load("buildACollar/options.html #sizes");
+}
+
+var setUpPopUp = function()
+{
+
+    $(".ui-dialog").css("position", "absolute");
+    $("#dialog").dialog({
+        position: {
+            my: "middle",
+            at: "top+25%",
+            of: $(".content"),
+            collision: "none",
+  
+        },
+        create: function (event, ui) {
+            $(event.target).parent().css('z-index', '10');
+        },
+        modal: false,
+        resizable: false,
+        closeOnEscape: false,
+        autoOpen: true,
+        height: 700,
+        width: 1030,
+        dialogClass: "dialog",
+        //show: {effect: 'bounce', duration: 350, times: 3}
+        show: { effect: 'fade', duration: 1000 }
+    });
+
+    $(".ui-dialog-titlebar").css("display", "block");
+    $(".ui-dialog-title").css("font-size", "5px");
+    $(".ui-widget-header").css("display", "block");
+    $(".ui-widget-content").css("background-color", "darkgrey");
+    $(".ui-widget-content").css("font-size", "12px");
+    $(".ui-corner-all").css("background-color", "darkgrey");
+    $(".ui-resizable-n").css("background-image", "none");
 }
 
 $(document).ready(function ($) {

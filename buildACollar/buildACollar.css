@@ -35,6 +35,12 @@
     margin-left:20px;
 }
 
+.measuringPopUp
+{
+     position:absolute;
+            z-index:1;
+}
+
 .colorOption 
 {
     position:relative;

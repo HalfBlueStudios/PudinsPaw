@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="siteWide/javascript/allResources.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+ 
 
     <link rel="stylesheet" type="text/css" href="buildACollar/buildACollar.css" />
     <script src="buildACollar/buildACollar.js"></script>
@@ -47,6 +49,19 @@
 
                 <br />
                 <div class="colorOptions"></div>
+
+                <div class="measuringPopUp">
+                                            <script>
+                          $(function() {
+                            $( "#dialog" ).dialog();
+                          });
+                                            </script>
+
+                        <div id="dialog" title="Basic dialog">
+                            <p style="background-color:darkgray">This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+                            <img src="Test1 copy.jpg" />
+                        </div>
+</div>
             </div>
         </div>
         <div class="footer">
