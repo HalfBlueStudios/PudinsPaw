@@ -13,6 +13,43 @@
 </head>
 
 <body>
+    <FORM NAME="getStartingType">
+        <INPUT TYPE="hidden" NAME="collarType" SIZE="35">
+    </FORM>
+    <SCRIPT LANGUAGE="javascript">
+
+        var locate = window.location
+        document.getStartingType.collarType.value = locate
+
+        var text = document.getStartingType.collarType.value
+
+        function delineate(str){
+            var retStrings = [];
+            var end = 0;
+            while(true)
+            {
+                var start = (str.indexOf("?", start) + 1)
+                var end = (str.indexOf("?", start));
+                if (end == -1)
+                {
+                    end = str.length;
+                }
+                retStrings[retStrings.length] = str.substring(start, end);
+                if(end == str.length)
+                {
+                    break;
+                }
+            }
+            return (retStrings);
+        }
+        var checkString = delineate(text);
+        for (i = 0; i < checkString.length; i++)
+        {
+            console.log(i + " argument is " + checkString[i]);
+        }
+        startFunc(checkString[0]);
+    </SCRIPT>
+
     <div class="allWrapper">
         <div class="header">
             <div class="navigationBar"></div>
@@ -55,16 +92,13 @@
                         <div class="sizes" id="sizeSelectOptions"></div>
                     </div>
                     <div class="measuringPopUp">
-                                                <script>
-                              $(function() {
-                                $( "#dialog" ).dialog();
-                              });
-                                                </script>
-
                             <div id="dialog" title="Basic dialog">
                                 <img src="Test1 copy.jpg" style="height:100%; width:300%;" />
                             </div>
                     </div>
+                </div>
+                <div class="checkOutButton">
+                    <button>CHECK OUT HERE</button>
                 </div>
             </div>
         </div>

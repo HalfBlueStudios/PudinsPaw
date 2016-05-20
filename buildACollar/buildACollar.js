@@ -509,6 +509,7 @@ var finishSelection = function(nextOption)
     {
         console.log("class: " + newSelection.attr('class'));
     }
+    checkIfPopUpReady();
     newSelection.animate({opacity: + 1000},8000)
 }
 
@@ -532,11 +533,11 @@ var parseColor = function (colorToParse)
 
 
 
-var main = function ()
+var main = function (startingName)
 {
     setUpCanvas();
     setUpOptions();
-    setUpPopUp();
+    //setUpPopUp();
     attachHandlers();
     selectionMade(); //displays first set of options
     //loadDefaultOptions();
@@ -635,6 +636,7 @@ var attachHandlers = function () {
                 checkIfAllColorsSelected();
             }
         );
+
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".colorOption",
                 function () {
                     changeColor($(this));
@@ -667,6 +669,13 @@ var attachHandlers = function () {
                 console.log("click! type");
                 //changeType($(this));
             });
+
+        $(NAME_OF_CURRENT_SELECTION).on("click", ".sizeOption",
+               function () {
+                   selectionMade();
+               }
+           );
+
 }
 
 var changeStyle = function(newStyleObject, finalCallBackFunc)
@@ -861,6 +870,19 @@ var resizeColorOptions = function()
     });
 }
 
+var checkIfPopUpReady = function()
+{
+    var popUp = $(NAME_OF_CURRENT_SELECTION).find(".measuringPopUp").first();
+    if (popUp.attr('class') != undefined)
+    {
+        $("#dialog").dialog();
+        var zinTimer = setInterval(function () {
+            $('#dialog').zIndex(20);
+                console.log("current index is " + $('#dialog').zIndex());
+        }, 200);
+    }
+}
+
 var setUpOptions = function()
 {
     $('#styleSelectOptions').load("buildACollar/options.html #styles");
@@ -868,11 +890,10 @@ var setUpOptions = function()
     $('#sizeSelectOptions').load("buildACollar/options.html #allSizes");
 }
 
-var setUpPopUp = function()
+var setUpPopUp = function(popUpHolder)
 {
-
     $(".ui-dialog").css("position", "absolute");
-    $("#dialog").dialog({
+    $(NAME_OF_CURRENT_SELECTION).find("#dialog").dialog({
         position: {
             my: "middle",
             at: "top+25%",
@@ -881,12 +902,13 @@ var setUpPopUp = function()
   
         },
         create: function (event, ui) {
+            $(event.target).parent().css('position', 'relative');
             $(event.target).parent().css('z-index', '10');
         },
         modal: false,
         resizable: false,
         closeOnEscape: false,
-        autoOpen: true,
+        autoOpen: false,
         height: 700,
         width: 1030,
         dialogClass: "dialog",
@@ -904,6 +926,9 @@ var setUpPopUp = function()
     $(".ui-resizable-n").css("background-image", "none");
 }
 
-$(document).ready(function ($) {
-    main();
-});
+var startFunc = function (startingName)
+{
+    $(document).ready(function ($) {
+        main(startingName);
+    });
+}
