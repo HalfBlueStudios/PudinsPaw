@@ -59,7 +59,6 @@
             <h1>Snap</h1>
             <color style="position:absolute;visibility:hidden; background-color:rgb(81,155,80);">30</color>
             <color style="position:absolute;visibility:hidden; background-color:rgb(47, 46,77);">1</color>
-            <selectionLoad></selectionLoad>
         </div>
 
         <div class="styleOption" style="background-image:url(buildACollar/baseTypeImages/snapBase.jpg); background-size:0px,0px;">
@@ -77,6 +76,13 @@
     <div class="allTypeOptions" id="types">
         <div class="typeOption" style="background-image:url(buildACollar/baseTypeImages/snapBase.jpg); background-size:0px,0px;">
             <h1>Leash</h1>
+            <load style="position:absolute;visibility:hidden">changeStyle($(this).find('.styleOption'), partial(selectionMade,"colorOptions"));</load>
+            <nextOption style="position:absolute;visibility:hidden">colorOptions</nextOption>
+            <div class="styleOption" style="background-image:url(buildACollar/baseTypeImages/leashBase.jpg); position:absolute;visibility:hidden"; background-size:0px,0px;">
+                <h1>collar</h1>
+                <color style="position:absolute;visibility:hidden; background-color:rgb(81,155,80);">30</color>
+                <color style="position:absolute;visibility:hidden; background-color:rgb(47, 46,77);">1</color>
+            </div>
         </div>
 
         <div class="typeOption" style="background-image:url(buildACollar/baseTypeImages/snapBase.jpg); background-size:0px,0px;">

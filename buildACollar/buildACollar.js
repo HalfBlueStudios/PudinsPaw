@@ -471,13 +471,18 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
 
     THIS CLASS HAS DANGER OF STACK OVERFLOW DUE TO RECURSIVE NATURE
 */
-var selectionMade = function()
+var selectionMade = function(classToFetch)
 {
+    console.log("class to fetch is " + classToFetch);
+    if (classToFetch == undefined) //no paramater passed
+    {
+        classToFetch = "";
+    }
     var setOfOptions = $(NAME_OF_ALL_OPTIONS).children();
     for (i = currentOptionNumber; i < setOfOptions.length; i++)
     {
         var nextOption = setOfOptions.eq(i);
-        if (nextOption.attr('class') != undefined) {
+        if (nextOption.attr('class') != undefined && nextOption.attr('class').includes(classToFetch) == true) {
             console.log("new selection name: " + nextOption.attr('class') + " with height of " + nextOption.css("height"));
             $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "+=" + nextOption.css("height") }, 1000, function () {
                 finishSelection(nextOption);
@@ -660,7 +665,13 @@ var attachHandlers = function () {
         $(NAME_OF_CURRENT_SELECTION).on("click", ".typeOption",
             function (evt) {
                 $(this).css("color", "teal");
-                selectionMade();
+                if ($(this).find("load").first().parent().attr("class") != undefined) {
+                    var functionName = $(this).find("load").first().html();
+                    eval(functionName);
+                }
+                else {
+                    selectionMade();
+                }
             //changeType($(this));
             });
 
@@ -670,6 +681,7 @@ var attachHandlers = function () {
                 //changeType($(this));
             });
 
+        /*----------------size option handlers---------------------*/
         $(NAME_OF_CURRENT_SELECTION).on("click", ".sizeOption",
                function () {
                    selectionMade();
@@ -824,10 +836,10 @@ var loadAllColors = function(numColors, finalCallBackFunc)
                         console.log("numloaded is " + numLoaded + " and num colors is " + numColors);
                         if (numLoaded == numColors) {
                             console.log("num loaded before is " + numLoaded);
+                            currentNumberOfColors = numLoaded;
                             if (finalCallBackFunc != null) {
                                 finalCallBackFunc();
                             }
-                            currentNumberOfColors = numLoaded;
                         }
                         return;
                     });
@@ -915,7 +927,6 @@ var setUpPopUp = function(popUpHolder)
         //show: {effect: 'bounce', duration: 350, times: 3}
         show: { effect: 'fade', duration: 1000 }
     });
-
     $(".ui-dialog-titlebar").css("display", "block");
     $(".ui-dialog-title").css("font-size", "35px");
     $(".ui-dialog-title").css("background-color", "red");
@@ -931,4 +942,17 @@ var startFunc = function (startingName)
     $(document).ready(function ($) {
         main(startingName);
     });
+}
+
+
+
+
+
+/*------------------helper functions-------------------*/
+function partial(func /*, 0..n args */) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function () {
+        var allArguments = args.concat(Array.prototype.slice.call(arguments));
+        return func.apply(this, allArguments);
+    };
 }
