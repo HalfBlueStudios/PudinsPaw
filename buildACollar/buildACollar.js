@@ -75,8 +75,6 @@ var setUpCanvas = function()
 
     canvasHeight = parseInt($('.previewCanvas').css('height'));
     canvasPosition = parseInt($('.previewCanvas').position().top);
-
-    
 }
 
 var resetCanvas = function(newUrl, callbackFunc, finalCallBackFunc)
@@ -462,8 +460,6 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
         return Math.abs(perRatio * distance_perc);
     }
 
-
-
 /*------------------Selection made------------------------------------
     Function to change the current selection into previous selection list
     then animates previous selection list down to accomidate new selection
@@ -471,7 +467,7 @@ var getPercentToColor = function(colorDistance, colorRatio, candDistance, candRa
 
     THIS CLASS HAS DANGER OF STACK OVERFLOW DUE TO RECURSIVE NATURE
 */
-var selectionMade = function(classToFetch)
+var selectionMade = function(classToFetch, finalCallBack)
 {
     console.log("class to fetch is " + classToFetch);
     if (classToFetch == undefined) //no paramater passed
@@ -485,7 +481,7 @@ var selectionMade = function(classToFetch)
         if (nextOption.attr('class') != undefined && nextOption.attr('class').includes(classToFetch) == true) {
             console.log("new selection name: " + nextOption.attr('class') + " with height of " + nextOption.css("height"));
             $(NAME_OF_CURRENT_SELECTION).animate({ marginTop: "+=" + nextOption.css("height") }, 1000, function () {
-                finishSelection(nextOption);
+                finishSelection(nextOption, finalCallBack);
             });
             currentOptionNumber = i + 1;
             return;
@@ -498,7 +494,7 @@ var selectionMade = function(classToFetch)
     Executes once the animation for selecting an option has completed
     finishes change the styles and loads in new one
 */
-var finishSelection = function(nextOption)
+var finishSelection = function(nextOption, finalCallBack)
 {
     console.log("in finished selection");
     $(NAME_OF_PREVIOUS_SELECTIONS).prepend($(NAME_OF_CURRENT_SELECTION).html());
@@ -515,9 +511,13 @@ var finishSelection = function(nextOption)
         console.log("class: " + newSelection.attr('class'));
     }
     checkIfPopUpReady();
-    newSelection.animate({opacity: + 1000},8000)
+    newSelection.stop().animate({ opacity: 1 }, 500, function () //CHANGE BACK TO 8000
+    {
+        if (finalCallBack != undefined) {
+            finalCallBack();
+        }
+    });
 }
-
 
 var parseColor = function (colorToParse)
 {
@@ -535,16 +535,13 @@ var parseColor = function (colorToParse)
     return (retValues);
 }
 
-
-
-
 var main = function (startingName)
 {
     setUpCanvas();
     setUpOptions();
     //setUpPopUp();
     attachHandlers();
-    selectionMade(); //displays first set of options
+    selectionMade(undefined,partial(checkPreSelectedArgs, startingName)); //displays first set of options    
     //loadDefaultOptions();
 }
 
@@ -605,7 +602,6 @@ var checkIfAllColorsSelected = function()
     console.log("all colors selected!");
     selectionMade();
 }
-
 
 var attachHandlers = function () {
         /*----------------color select handlers------------------*/
@@ -944,9 +940,38 @@ var startFunc = function (startingName)
     });
 }
 
+/*-----------------check pre selected args -------------------------
+    function to check arguments selected on the homepage 
+    automatically makes the selections if they exist
+*/
+var checkPreSelectedArgs = function(allArgs)
+{
+    //USING TIMEOUTS TO SELECT THE NEXT ITEM IN THE LIST?
+    console.log("in check args! with length of " + allArgs.length);
+    for(i = 0; i < allArgs.length; i++)
+    {
+        var allChildren = $(NAME_OF_CURRENT_SELECTION).children();
+        console.log("all children length is " + allChildren.length);
+        for(k = 0; k < allChildren.length; k++)
+        {
+            var currentCheck = allChildren.eq(k);
+            var allText = currentCheck.find("h1");
+            for (j = 0; j < allText.length; j++)
+            {
+                var innerText = allText.eq(j).html();
+                console.log("checking " + innerText + " against " + allArgs[i]);
+                if (innerText == allArgs[i])
+                {
+                    console.log("FOUND ARG " + innerText);
+                    allText.eq(j).parent().trigger("click", function () {
+                        console.log("finished with the trigger!");
+                    });
+                }
 
-
-
+            }
+        }
+    }
+}
 
 /*------------------helper functions-------------------*/
 function partial(func /*, 0..n args */) {
