@@ -16,9 +16,29 @@
 
 .contactForm input
 {
-    background-color:lightgrey;
+    border-radius:5px;
+    border-style:solid;
+    border-width:thin;
+    margin-top:0px;
+    margin-bottom:20px;
+    width:85%;
+    height:20px;
 }
 .contactForm textarea
 {
-    background-color:lightgrey;
+    border-radius:5px;
+    border-style:solid;
+    border-width:thin;
+}
+
+.contactForm h3
+{
+    font-size:xx-large;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+
+.contactForm select
+{
+    margin-bottom:20px;
 }
