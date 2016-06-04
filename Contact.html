@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="siteWide/javascript/allResources.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="buildACollar/buildACollar.css" />
+    <script src="buildACollar/buildACollar.js"></script>
+</head>
+<body>
+    <div class="allWrapper">
+        <div class="header">
+            <div class="navigationBar"></div>
+        </div>
+
+        <div class="content" style="width:100%">
+            <div class="contactForm"></div>
+            <form style="margin-left:40%; margin-top:3%;">
+                Name:<br />
+                <input type="text" name="name" /><br />
+                email address:<br />
+                <input type="text" name="email" /><br />
+                Reason for message<br/>
+                <select name="reason">
+                        <option value="Feedback">Feedback</option>
+                        <option value="Return">Return Request</option>
+                        <option value="Product question">Product Question</option>
+                        <option value="Buisness Inqury">Buisness Inqury</option>
+                </select>
+                <br/>
+                Message:<br/>
+                <textarea type="text"  name="message" rows="10" cols="30"></textarea>
+                </br />
+                <input type="submit" value="Submit"  style="margin-left:10%"/>
+            </form>    
+        </div>
+        <div class="footer">
+            <footer class="pageFooter"></footer>
+        </div>
+    </div>
+
+</body>
+</html>
