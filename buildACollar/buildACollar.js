@@ -587,14 +587,14 @@ var changeColor = function(newColorObj)
                 var num = 0;
                 while(currentSelection.attr('class') != undefined)
                 {
-                    if(getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) == chosenColors[colorNum].children("img").css("background-image"))
+                    if("url(\"" + getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) + "\")" == chosenColors[colorNum].children("img").css("background-image"))
                     {
                         chosenColors[colorNum] = currentSelection;
                         break;
                     }
                     else
                     {
-                        console.log("compared " + getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) + " and " + chosenColors[colorNum].children("img").css("background-image"));
+                        console.log("compared " + "url(" + getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) + ")" + " and " + chosenColors[colorNum].children("img").css("background-image"));
                     }
                     num++;
                     currentSelection = allColors.eq(num);
