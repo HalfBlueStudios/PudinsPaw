@@ -1,4 +1,34 @@
-﻿.div
+﻿element.style
+{
+    z-index:20;
+}
+
+.ui-dialog { 
+    z-index: 1000 !important ;
+    background-color:transparent;
+    border-style:hidden;
+    border-width:thick;  
+    background-image:none;      
+}
+.ui-dialog .ui-dialog-titlebar-close {
+    position: absolute;
+    left: 110%;
+    top: 85%;
+    width: 60%;
+    margin: -10px 0 0 0;
+    padding: 1px;
+    height: 10%;
+}
+
+.ui-dialog button
+{
+    background-color:white;
+    border-color:teal;
+    color:black;
+    font-size:medium;
+}
+
+.div
 {
     width: 300%;
 }

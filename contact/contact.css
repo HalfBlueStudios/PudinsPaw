@@ -23,12 +23,14 @@
     margin-bottom:20px;
     width:85%;
     height:20px;
+    font-size:medium;
 }
 .contactForm textarea
 {
     border-radius:5px;
     border-style:solid;
     border-width:thin;
+    font-size:large;
 }
 
 .contactForm h3

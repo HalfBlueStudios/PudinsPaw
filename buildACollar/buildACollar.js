@@ -572,7 +572,7 @@ var changeColor = function(newColorObj)
     var optionType = newColorObj.parent().parent().attr('id');
     var colorNum = optionType[optionType.length - 1]; //gets what number color the color selected belongs to
     var colorName = newColorObj.children("h1").html();
-    if (chosenColors[colorNum] == this) //color already selected
+    if (chosenColors[colorNum] == newColorObj) //color already selected
     {
         return;
     }
@@ -580,8 +580,34 @@ var changeColor = function(newColorObj)
     {
         if (chosenColors[colorNum] != undefined)
         {
+            if ( $(NAME_OF_CURRENT_SELECTION).find('.' + chosenColors[colorNum].attr("class")).attr("class") == undefined)
+            {
+                var allColors = $(NAME_OF_PREVIOUS_SELECTIONS).find('.' + chosenColors[colorNum].attr("class"));
+                var currentSelection = allColors.first();
+                var num = 0;
+                while(currentSelection.attr('class') != undefined)
+                {
+                    if(getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) == chosenColors[colorNum].children("img").css("background-image"))
+                    {
+                        chosenColors[colorNum] = currentSelection;
+                        break;
+                    }
+                    else
+                    {
+                        console.log("compared " + getBackgroundImageFromUrl(currentSelection.children("img").css("background-image")) + " and " + chosenColors[colorNum].children("img").css("background-image"));
+                    }
+                    num++;
+                    currentSelection = allColors.eq(num);
+                }
+            }
+            else
+            {
+                console.log("id found is " + $(NAME_OF_CURRENT_SELECTION).find('#' + chosenColors[colorNum].attr("id")).attr("id"));
+            }
+            console.log("defined!");
             chosenColors[colorNum].children("img").css("border-style", "none"); //gets rid of visual selector on old selection
         }
+        console.log("undefined!");
         chosenColors[colorNum] = newColorObj;
     }
     chosenColors[colorNum].children("img").css("border-style", "solid");
@@ -901,6 +927,7 @@ var setUpOptions = function()
 var setUpPopUp = function(popUpHolder)
 {
     $(".ui-dialog").css("position", "absolute");
+    $(".ui-dialog").css("width", "1000px");
     $(NAME_OF_CURRENT_SELECTION).find("#dialog").dialog({
         position: {
             my: "middle",
@@ -917,13 +944,15 @@ var setUpPopUp = function(popUpHolder)
         resizable: false,
         closeOnEscape: false,
         autoOpen: false,
-        height: 700,
-        width: 1030,
+        height: 500,
+        width: 500,
         dialogClass: "dialog",
         //show: {effect: 'bounce', duration: 350, times: 3}
         show: { effect: 'fade', duration: 1000 }
     });
+   
     $(".ui-dialog-titlebar").css("display", "block");
+    $(".ui-dialog-title").css("background-color", "red");
     $(".ui-dialog-title").css("font-size", "35px");
     $(".ui-dialog-title").css("background-color", "red");
     $(".ui-widget-header").css("display", "block");
