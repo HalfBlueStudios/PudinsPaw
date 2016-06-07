@@ -112,7 +112,6 @@
 {
     float:left;
     margin-left:0px;
-    margin-right:500px;
     display:inline-flex;
 }
 
@@ -160,74 +159,3 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-.allSteps
-{
-    margin-top:25px;
-    margin-left:400px;
-}
-
-.allSteps .step .circle
-{
-    display:inline-block;
-    width:75px;
-    height:75px;
-    border-radius: 50%;
-    border-color:orange;
-    background-color:red;
-}
-
-.allSteps .step .circleConnectorLine
-{
-   display: inline-block;
-   position:relative;
-   background-color:red;
-   height: 5px;
-   width: 100px;
-   margin-bottom:33px;
-   margin-left:-5px;
-   margin-right:-5px;
-}
-
-.optionSelector
-{
-    display:block;
-    margin-top:100px;
-    margin-left:800px;
-}
-
-.optionSelector .stepOption
-{
-    position:absolute;
-    width: 0; 
-	height: 0; 
-    color:red;
-    margin-left:500px;
-    margin-top: 500px;
-    border-color:red;
-	border-left: 60px solid transparent;
-	border-right: 60px solid transparent;
-	border-bottom: 80px solid;
-    transform: rotate(90deg);
-    border-bottom-left-radius: 60px;
-    border-bottom-right-radius: 60px;
-}
-
-    */

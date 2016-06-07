@@ -582,7 +582,9 @@ var changeColor = function(newColorObj)
         {
             if ( $(NAME_OF_CURRENT_SELECTION).find('.' + chosenColors[colorNum].attr("class")).attr("class") == undefined)
             {
-                var allColors = $(NAME_OF_PREVIOUS_SELECTIONS).find('.' + chosenColors[colorNum].attr("class"));
+                var parentId = chosenColors[colorNum].parent().parent().attr("id");
+                var colorHolder = $(NAME_OF_PREVIOUS_SELECTIONS).find('#' + parentId);
+                var allColors = colorHolder.find('.' + chosenColors[colorNum].attr("class"));
                 var currentSelection = allColors.first();
                 var num = 0;
                 while(currentSelection.attr('class') != undefined)
