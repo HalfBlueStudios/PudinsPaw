@@ -99,17 +99,19 @@ div
     color:white;
 }
 
+
 .navigationBar .userBar img
 {
     width:4rem;
     height:4rem;
     margin-top: -10px;
+    margin-right:0px;
 }
 
 .navigationBar .logoDivder img
 {
-    width:200px;
-    height: 40px;
+    width:20%;
+    height: 50%;
     margin-bottom:10px;
     margin-right:0px;
     margin-left:-60px;
@@ -118,6 +120,6 @@ div
 
 .pageNav
 {
-    margin-left:13%;
+    margin-left:5%;
     margin-right:3%;
 }
