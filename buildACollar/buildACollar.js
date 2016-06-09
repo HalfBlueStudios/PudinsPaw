@@ -501,6 +501,7 @@ var finishSelection = function(nextOption, finalCallBack)
     $(NAME_OF_CURRENT_SELECTION).css("margin-top", "-=" + nextOption.css("height"));
     var classDec = "<div style=\"opacity:0\" class = '" + nextOption.attr('class') + "'>"
     $(NAME_OF_CURRENT_SELECTION).html(classDec + nextOption.html());
+    $(NAME_OF_CURRENT_SELECTION).append("<br\>");
     var newSelection = $(NAME_OF_CURRENT_SELECTION).find("." + nextOption.attr('class'));
     if (newSelection == undefined)
     {
@@ -696,13 +697,30 @@ var attachHandlers = function () {
                 else {
                     selectionMade();
                 }
-            //changeType($(this));
+                chosenTypeObject = $(this);
             });
 
         $(NAME_OF_PREVIOUS_SELECTIONS).on("click", ".typeOption",
             function (evt) {
-                console.log("click! type");
-                //changeType($(this));
+                if (chosenTypeObject != $(this))
+                {
+                    newType = $(NAME_OF_PREVIOUS_SELECTIONS).find("." + chosenTypeObject.attr("class"));
+                    var checkObj = newType.eq(0);
+                    var num = 0;
+                    console.log("checkobj clas is " + checkObj.attr("class"));
+                    console.log("checking for class " + chosenTypeObject.attr("class"));
+                    while (checkObj.attr("class") != undefined) {
+                        if (checkObj.children("h1").html() == chosenTypeObject.children("h1").html()) {
+                            checkObj.css("color", "black");
+                        }
+                        console.log("comparing " + checkObj.children("h1").html() + " and " + $(chosenTypeObject).children("h1").html());
+                        num++;
+                        checkObj = chosenTypeObject.eq(num);
+                    }
+                    console.log("chosen type object changed!");
+                    chosenTypeObject = $(this);
+                    chosenTypeObject.css("color", "teal");
+                }
             });
 
         /*----------------size option handlers---------------------*/

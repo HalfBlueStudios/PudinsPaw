@@ -49,12 +49,12 @@
 .currentSelectionChoice
 {
     display:block;
+    margin-top:30px;
 }
 
 .previousSelections
 {
-    display:block;
-    display: block;
+    display:inline-block;
     float:left;
     list-style: none;
 }
@@ -110,9 +110,8 @@
 /*put a bandiade here for now with margin-right, will have to be proporly fixed*/
 .wordOptionBox 
 {
-    float:left;
     margin-left:0px;
-    display:inline-flex;
+    display:inline-block;
 }
 
 .wordOptionBox h1
@@ -120,6 +119,7 @@
     cursor: pointer;
     border:none;
     margin-left:20px;
+    display:inline;
 }
 
 .styleOption h1
